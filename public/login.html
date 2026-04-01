@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <title>Acceso — Sabores del Guijo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <style>
+    :root { --verde:#9bd4ff; --negro:#807f7f; }
+    body {
+      margin:0; height:100vh; display:flex; align-items:center; justify-content:center;
+      font-family: system-ui, -apple-system, Arial, sans-serif; background:#021325;
+    }
+    .card {
+      width: 400px; border:2px solid var(--negro); border-radius:14px; padding:18px;
+      box-shadow:0 10px 24px rgba(255, 255, 255, 0.396); background:#fff;
+    }
+    h1 { font-size:20px; margin:0 0 4px; }
+    .muted { color:#222222; font-size:15px; margin-bottom:6px; margin-left: 2px; }
+    label { display:block; font-weight:600; margin:8px 0 4px; }
+    input[type="text"], input[type="password"] {
+      width:97%; padding: 7px; border:1px solid #aaa; border-radius:8px; font-size:14px;
+    }
+    button {
+      margin-top:10px; width:100%; padding:10px; font-weight:700; cursor:pointer;
+      background:var(--verde); color:#fff; border:2px solid var(--negro); border-radius:10px;
+    }
+    button:hover { filter:brightness(1.05); }
+    .err { color:#b00; margin-top:8px; font-size:13px; }
+    .brand { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+    .brand img { height:50px; border-radius:6px; border:1px solid #ccc; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="brand">
+      <img src="logo-triangle ai.png" alt="Logo" onerror="this.style.display='none'"/>
+      <div>
+        <h1>Triangle AI — Acceso</h1>
+        <div class="muted">Introduce tus credenciales</div>
+      </div>
+    </div>
+
+    <form method="post" action="/login">
+      <label>Usuario</label>
+      <input type="text" name="username" autocomplete="username" required>
+      <label>Contraseña</label>
+      <input type="password" name="password" autocomplete="current-password" required>
+      <button type="submit">Entrar</button>
+      <div class="err">
+        <script>
+          const p = new URLSearchParams(location.search);
+          if (p.get('e')==='1') document.write('Usuario o contraseña incorrectos');
+        </script>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

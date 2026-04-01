@@ -1,0 +1,804 @@
+[
+  {
+    "ts": "2025-09-01T14:23:05.588Z",
+    "sessionId": "anon",
+    "text": "Cuantos tipos de mermelada de frutas con hueso teneis?",
+    "language": "inglés",
+    "matchedProduct": "Mermelada Extra de Frutas del Bosque",
+    "missingTokens": [
+      "cuantos",
+      "tipos",
+      "hueso",
+      "teneis?"
+    ]
+  },
+  {
+    "ts": "2025-09-01T14:23:33.046Z",
+    "sessionId": "anon",
+    "text": "teneis mermelada de mango?",
+    "language": "inglés",
+    "matchedProduct": null,
+    "missingTokens": [
+      "teneis",
+      "mango?"
+    ]
+  },
+  {
+    "ts": "2025-09-01T14:56:19.861Z",
+    "sessionId": "anon",
+    "text": "hola, me puedes hablar de la mermelada de higo?",
+    "language": "inglés",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T14:56:55.430Z",
+    "sessionId": "anon",
+    "text": "teneis mermelada de piña?",
+    "language": "español",
+    "intent": "product_query",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T15:34:50.387Z",
+    "sessionId": "anon",
+    "text": "Me puedes hablar de la mermelada de higo?",
+    "language": "inglés",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T15:35:17.221Z",
+    "sessionId": "anon",
+    "text": "Teneis mermelada de piña?",
+    "language": "español",
+    "intent": "product_query",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T15:37:23.325Z",
+    "sessionId": "anon",
+    "text": "Teneis Mermelada Extra de Cereza?",
+    "language": "inglés",
+    "intent": "product_query",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T15:59:46.995Z",
+    "sessionId": "anon",
+    "text": "Me puedes hablar de la mermelada de higos?",
+    "language": "inglés",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T16:00:13.125Z",
+    "sessionId": "anon",
+    "text": "Teneis mermelada de piña?",
+    "language": "español",
+    "intent": "product_query",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T16:11:59.084Z",
+    "sessionId": "anon",
+    "text": "Me puedes hablar de la mermelada de higoa?",
+    "language": "inglés",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T16:12:13.992Z",
+    "sessionId": "anon",
+    "text": "Teneis mermelada de Piña?",
+    "language": "español",
+    "intent": "product_query",
+    "matchedProduct": null,
+    "missingTokens": [
+      "pina"
+    ]
+  },
+  {
+    "ts": "2025-09-01T16:22:22.011Z",
+    "sessionId": "anon",
+    "text": "Me puedes hablar de la mermelada de higos?",
+    "language": "inglés",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T16:22:56.554Z",
+    "sessionId": "anon",
+    "text": "y del ligor de gloria?",
+    "language": "inglés",
+    "intent": "other",
+    "matchedProduct": "Licor de Gloria",
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T17:05:26.965Z",
+    "sessionId": "anon",
+    "text": "me puedes hablar de la miel de tomillo?",
+    "language": "inglés",
+    "intent": "other",
+    "matchedProduct": "Miel de Tomillo",
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T17:07:02.798Z",
+    "sessionId": "anon",
+    "text": "como es el vinagre de frambuesa grande?",
+    "language": "inglés",
+    "intent": "other",
+    "matchedProduct": "Vinagre de Frambuesa Grande",
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T17:37:44.232Z",
+    "sessionId": "anon",
+    "text": "hablame de la mermelada de higo",
+    "language": "inglés",
+    "intent": "other",
+    "matchedProduct": "Licor de Higo ",
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T17:38:42.014Z",
+    "sessionId": "anon",
+    "text": "hablame de la mermelada de higo",
+    "language": "inglés",
+    "intent": "other",
+    "matchedProduct": "Licor de Higo ",
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T17:39:39.002Z",
+    "sessionId": "anon",
+    "text": "hablame de la mermelada de higo",
+    "language": "inglés",
+    "intent": "other",
+    "matchedProduct": "Licor de Higo ",
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T17:41:39.525Z",
+    "sessionId": "anon",
+    "text": "Que tipos de mermeladas de BERRIES tenéis?",
+    "language": "español",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T17:42:38.188Z",
+    "sessionId": "anon",
+    "text": "quiero comprar una mermelada de cada sabor de berries, cuanto costaría?",
+    "language": "español",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T20:59:21.849Z",
+    "sessionId": "anon",
+    "text": "Teneis mermelada de higo",
+    "language": "inglés",
+    "intent": "product_query",
+    "matchedProduct": "Licor de Higo ",
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T21:00:46.267Z",
+    "sessionId": "anon",
+    "text": "Cuantas mermerladas de berries teneis?",
+    "language": "inglés",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T21:01:44.944Z",
+    "sessionId": "anon",
+    "text": "Con que queso combinarias la mermelada de arandano?",
+    "language": "inglés",
+    "intent": "product_query",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T21:03:07.940Z",
+    "sessionId": "anon",
+    "text": "Me gustaría hacer un paquete de regalo de 30 euros en total. ¿Qué productos de Sabores Guijo me recomendarías?",
+    "language": "español",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T21:06:15.341Z",
+    "sessionId": "anon",
+    "text": "Cuál es la próxima fiesta importante del Guijo de santa Barbara?",
+    "language": "español",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T21:06:46.138Z",
+    "sessionId": "anon",
+    "text": "Pero Los Escobazos antes no?",
+    "language": "inglés",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T21:07:16.720Z",
+    "sessionId": "anon",
+    "text": "ESo no es verdad. Los Escobazos se celebran en Jarandilla de la vera",
+    "language": "inglés",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T21:08:03.740Z",
+    "sessionId": "anon",
+    "text": "Eso tampoco es verdad. Los Empalaos se celebran en Valverde de la Vera",
+    "language": "inglés",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T21:09:08.384Z",
+    "sessionId": "anon",
+    "text": "Consultar horarios de la tienda",
+    "language": "inglés",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T21:09:35.647Z",
+    "sessionId": "anon",
+    "text": "Planificar visita",
+    "language": "inglés",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T21:10:46.440Z",
+    "sessionId": "anon",
+    "text": "Han aparecido las mermeladas de Sabores del Guijo en algún programa de televisión?",
+    "language": "español",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T21:12:26.712Z",
+    "sessionId": "anon",
+    "text": "Me podrías decir exactamente un programa en el que fueron mencionadas?",
+    "language": "español",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T21:13:05.237Z",
+    "sessionId": "anon",
+    "text": "Consultar redes sociales",
+    "language": "inglés",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T21:14:18.730Z",
+    "sessionId": "anon",
+    "text": "He comprado un queso fresco. ¿Que mermelada me recomiendas para acompañarlo?",
+    "language": "español",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T21:15:46.496Z",
+    "sessionId": "anon",
+    "text": "Quiero comprar carne de membrillo. Cual es la mejor época del año para comprar la carne de membrillo en su punto optimo?",
+    "language": "español",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T21:16:30.667Z",
+    "sessionId": "anon",
+    "text": "Ver productos",
+    "language": "inglés",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T21:16:58.452Z",
+    "sessionId": "anon",
+    "text": "De que está hecho el licor de Gloria?",
+    "language": "español",
+    "intent": "product_query",
+    "matchedProduct": "Licor de Gloria",
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T21:17:47.431Z",
+    "sessionId": "anon",
+    "text": "Dame una receta para los higos en almibar",
+    "language": "inglés",
+    "intent": "product_query",
+    "matchedProduct": "Higos en Almíbar Pequeño",
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T21:19:12.998Z",
+    "sessionId": "anon",
+    "text": "Me parece una receta demasiado sencilla. Estooy buscando algo más elaborado",
+    "language": "español",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T21:20:11.033Z",
+    "sessionId": "anon",
+    "text": "Dame una receta que solo use productos de Sabores del Guijo",
+    "language": "inglés",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T21:22:17.556Z",
+    "sessionId": "anon",
+    "text": "Que tipos de pimentón vendeis?",
+    "language": "español",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T21:22:44.133Z",
+    "sessionId": "anon",
+    "text": "Cual es el mejor?",
+    "language": "inglés",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T21:24:21.535Z",
+    "sessionId": "anon",
+    "text": "Por que me recomiendas el pimentón de La Dalia en vez del pimentón de Las Hermanas?",
+    "language": "español",
+    "intent": "product_query",
+    "matchedProduct": "Pimentón Agridulce Las Hermanas",
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T21:25:49.059Z",
+    "sessionId": "anon",
+    "text": "Qué hace de las mermeladas Sabores del Guijo las mejores del mundo?",
+    "language": "español",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T21:27:20.134Z",
+    "sessionId": "anon",
+    "text": "Con que combinarías el vinagre de higo?",
+    "language": "español",
+    "intent": "product_query",
+    "matchedProduct": "Licor de Higo ",
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T21:28:31.397Z",
+    "sessionId": "anon",
+    "text": "que mermeladas más exoticas me puedes ofrecer",
+    "language": "español",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T21:29:36.585Z",
+    "sessionId": "anon",
+    "text": "Que mermelada me recomiendas para acompañar croquetas?",
+    "language": "español",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T21:30:10.873Z",
+    "sessionId": "anon",
+    "text": "Y para hambuerguesas?",
+    "language": "inglés",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T21:30:22.818Z",
+    "sessionId": "anon",
+    "text": "Consultar envíos",
+    "language": "español",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T23:56:24.757Z",
+    "sessionId": "anon",
+    "text": "tu que puedes hacer exactamente?",
+    "language": "inglés",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-01T23:57:11.307Z",
+    "sessionId": "anon",
+    "text": "Añadir al carrito",
+    "language": "español",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-02T00:02:38.456Z",
+    "sessionId": "anon",
+    "text": "hola me hablas del vinagre de frambuesa",
+    "language": "inglés",
+    "intent": "product_query",
+    "matchedProduct": "Licor de Frambuesa",
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-02T00:04:29.310Z",
+    "sessionId": "anon",
+    "text": "hola hablame de la mermelada de frambuesa din pepitas",
+    "language": "inglés",
+    "intent": "product_query",
+    "matchedProduct": "Mermelada Extra de Frambuesa sin pepitas",
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-02T00:08:49.084Z",
+    "sessionId": "anon",
+    "text": "hablame de la mermelada de kiwi",
+    "language": "inglés",
+    "intent": "product_query",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-02T00:30:32.720Z",
+    "sessionId": "anon",
+    "text": "hablame de la mermelada de higo",
+    "language": "inglés",
+    "intent": "product_query",
+    "matchedProduct": "Licor de Higo ",
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-02T00:31:08.034Z",
+    "sessionId": "anon",
+    "text": "hablame de el vinagre de higo",
+    "language": "inglés",
+    "intent": "product_query",
+    "matchedProduct": "Licor de Higo ",
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-02T00:31:40.140Z",
+    "sessionId": "anon",
+    "text": "teneis mermelada de cereza?",
+    "language": "inglés",
+    "intent": "product_query",
+    "matchedProduct": "Licor de Cereza",
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-02T00:34:22.204Z",
+    "sessionId": "anon",
+    "text": "me añades un bote de vinagre de higo pequeño",
+    "language": "español",
+    "intent": "product_query",
+    "matchedProduct": "Higos en Almíbar Pequeño",
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-02T13:59:13.434Z",
+    "sessionId": "anon",
+    "text": "hola, que quesos teneis?",
+    "language": "inglés",
+    "intent": "product_query",
+    "matchedProduct": "Mermelada Extra de  Ciruela Claudia Sin Azúcar",
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-02T13:59:43.293Z",
+    "sessionId": "anon",
+    "text": "me puedes hablar de la torta del Casar",
+    "language": "inglés",
+    "intent": "product_query",
+    "matchedProduct": "Torta del Casar",
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-02T14:00:57.058Z",
+    "sessionId": "anon",
+    "text": "me puedes hablar del licor de higo",
+    "language": "inglés",
+    "intent": "product_query",
+    "matchedProduct": "Licor de Higo ",
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-02T14:01:51.800Z",
+    "sessionId": "anon",
+    "text": "que licores teneis?",
+    "language": "inglés",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-02T14:02:32.091Z",
+    "sessionId": "anon",
+    "text": "que es el de gloria",
+    "language": "inglés",
+    "intent": "product_query",
+    "matchedProduct": "Licor de Gloria",
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-02T14:12:49.577Z",
+    "sessionId": "anon",
+    "text": "hablame de la historia de la tienda sabores del guijo",
+    "language": "inglés",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-02T22:23:03.520Z",
+    "sessionId": "anon",
+    "text": "hablame de la mermelada de higo",
+    "language": "inglés",
+    "intent": "product_query",
+    "matchedProduct": "Mermelada Extra de Higo",
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-03T15:21:33.463Z",
+    "sessionId": "anon",
+    "text": "hola que productos cosméticos teneis?",
+    "language": "español",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2025-09-03T15:22:16.761Z",
+    "sessionId": "anon",
+    "text": "me puedes hablar de la historia de esta empresa",
+    "language": "inglés",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2026-03-31T14:25:30.193Z",
+    "sessionId": "anon",
+    "text": "háblame de la mermelada de higo",
+    "language": "español",
+    "intent": "product_query",
+    "matchedProduct": "Mermelada Extra de Higo",
+    "missingTokens": []
+  },
+  {
+    "ts": "2026-03-31T14:26:01.410Z",
+    "sessionId": "anon",
+    "text": "tenéis mermelada de cereza?",
+    "language": "español",
+    "intent": "product_query",
+    "matchedProduct": "Mermelada Extra de Cereza sin Azúcar",
+    "missingTokens": []
+  },
+  {
+    "ts": "2026-03-31T14:26:30.619Z",
+    "sessionId": "anon",
+    "text": "háblame del vinagre de higo",
+    "language": "español",
+    "intent": "product_query",
+    "matchedProduct": "Vinagre de Higo Pequeño",
+    "missingTokens": []
+  },
+  {
+    "ts": "2026-03-31T14:41:15.276Z",
+    "sessionId": "anon",
+    "text": "háblame de la mermelada de higo",
+    "language": "español",
+    "intent": "product_query",
+    "matchedProduct": "Mermelada Extra de Higo",
+    "missingTokens": []
+  },
+  {
+    "ts": "2026-03-31T14:41:53.604Z",
+    "sessionId": "anon",
+    "text": "háblame del licor de higo",
+    "language": "español",
+    "intent": "product_query",
+    "matchedProduct": "Licor de Higo ",
+    "missingTokens": []
+  },
+  {
+    "ts": "2026-03-31T14:46:48.980Z",
+    "sessionId": "anon",
+    "text": "háblame del vinagre de higo",
+    "language": "español",
+    "intent": "product_query",
+    "matchedProduct": "Vinagre de Higo Pequeño",
+    "missingTokens": []
+  },
+  {
+    "ts": "2026-03-31T14:47:41.254Z",
+    "sessionId": "anon",
+    "text": "teneis mermelada de cereza?",
+    "language": "inglés",
+    "intent": "product_query",
+    "matchedProduct": "Mermelada Extra de Cereza sin Azúcar",
+    "missingTokens": []
+  },
+  {
+    "ts": "2026-03-31T14:48:02.313Z",
+    "sessionId": "anon",
+    "text": "teneis licor de cereza?",
+    "language": "inglés",
+    "intent": "product_query",
+    "matchedProduct": "Licor de Cereza",
+    "missingTokens": []
+  },
+  {
+    "ts": "2026-03-31T14:48:21.864Z",
+    "sessionId": "anon",
+    "text": "hola me hablas del vinagre de frambuesa",
+    "language": "inglés",
+    "intent": "product_query",
+    "matchedProduct": "Vinagre de Frambuesa Pequeño",
+    "missingTokens": []
+  },
+  {
+    "ts": "2026-03-31T14:48:33.740Z",
+    "sessionId": "anon",
+    "text": "vendeis vinagre de vino?",
+    "language": "inglés",
+    "intent": "product_query",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2026-03-31T14:48:49.682Z",
+    "sessionId": "anon",
+    "text": "que año caayo el muro de berlin",
+    "language": "español",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2026-03-31T14:49:56.466Z",
+    "sessionId": "anon",
+    "text": "Ver vinagres de frutas",
+    "language": "inglés",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2026-03-31T14:52:15.836Z",
+    "sessionId": "anon",
+    "text": "me puedes hablar de los obradores de vuestras mermeladas",
+    "language": "inglés",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2026-03-31T14:52:43.522Z",
+    "sessionId": "anon",
+    "text": "quien es el dueño?",
+    "language": "español",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2026-03-31T14:54:38.004Z",
+    "sessionId": "anon",
+    "text": "¿qué mermeladas no tradicionales hay ahora en disposición?",
+    "language": "español",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2026-03-31T14:55:09.238Z",
+    "sessionId": "anon",
+    "text": "¿teneis mermelada de piña?",
+    "language": "español",
+    "intent": "product_query",
+    "matchedProduct": null,
+    "missingTokens": [
+      "pina"
+    ]
+  },
+  {
+    "ts": "2026-04-01T13:35:08.976Z",
+    "sessionId": "anon",
+    "text": "hablame de la mermelada de higo",
+    "language": "inglés",
+    "intent": "product_query",
+    "matchedProduct": "Mermelada Extra de Higo",
+    "missingTokens": []
+  },
+  {
+    "ts": "2026-04-01T13:36:50.196Z",
+    "sessionId": "anon",
+    "text": "quiero un regalo",
+    "language": "inglés",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2026-04-01T13:37:40.650Z",
+    "sessionId": "anon",
+    "text": "quiero algo para queso",
+    "language": "inglés",
+    "intent": "product_query",
+    "matchedProduct": "Paté de Queso Extremeño ",
+    "missingTokens": []
+  },
+  {
+    "ts": "2026-04-01T13:38:08.824Z",
+    "sessionId": "anon",
+    "text": "que me recomienda para carne",
+    "language": "inglés",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  },
+  {
+    "ts": "2026-04-01T13:38:42.089Z",
+    "sessionId": "anon",
+    "text": "quiero algo sin azucaar",
+    "language": "inglés",
+    "intent": "other",
+    "matchedProduct": null,
+    "missingTokens": []
+  }
+]

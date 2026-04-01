@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Chat Sabores del Guijo (Prototipo Local)</title>
+    <style>
+      body { font-family: system-ui, -apple-system, Arial, sans-serif; max-width: 800px; margin: 60px auto; padding: 0 20px; background-color: #dcefc8; border-color: 1px solid #212121; }
+      .app { border: 1px solid #bfbfbf; border-radius: 14px; padding: 16px; box-shadow: 0 10px 20px rgba(0,0,0,.06); }
+      .header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; background-color: #dcefc8; }
+      .logo { width: 10px; height: 10px; border-radius: 50%; background: #dcefc8; display: grid; place-items: center; font-weight: 700; }
+      .messages { height: 420px; overflow: auto; border: 1px solid #eee; border-radius: 10px; padding: 12px; background: #fafafa; }
+      .msg { padding: 10px 12px; border-radius: 12px; margin: 8px 0; max-width: 80%; line-height: 1.35; }
+      .user { background: #849a6b; margin-left: auto; }
+      .bot  { background: #fff; border: 1px solid #eee; }
+      .composer { display: flex; gap: 8px; margin-top: 12px; }
+      input, select, button { padding: 10px 12px; border-radius: 10px; border: 1px solid #ddd; }
+      button { cursor: pointer; background: #849a6b; }
+      img { height: 80px; }
+      #backBtn { position: fixed; bottom: 20px; left: 20px; background: #fff; border: 2px solid #000; border-radius: 12px; padding: 8px 14px; font-size: 14px; color: #000; text-decoration: none; box-shadow: 0 2px 6px rgba(0,0,0,0.2); transition: background 0.2s ease; z-index: 9999; } 
+
+       #backBtn:hover { background: #2a7c3f; color: #fff; border-color: #2a7c3f; }
+.chat-msg { border:1px solid #eee; border-radius:14px; padding:10px 12px; margin:8px 0; line-height:1.4; background:#fff; }
+.chat-msg.user { background:#f7f7f7; }
+.chat-msg.assistant { background:#fff; }
+.chat-msg h4 { margin:4px 0 6px; font-size:14px; }
+.chat-msg ul { margin:6px 0 0 1.2em; padding:0; }
+.chat-msg li { margin:4px 0; }
+.suggestions { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+.suggestions button { border:2px solid #6e6e6e; background:#fff; border-radius:999px; padding:6px 10px; cursor:pointer; font-size:12px; }
+.suggestions button:hover { background:#2a7c3f; color:#fff; border-color:#2a7c3f; }
+.product-card { border:1px solid #6e6e6e; border-radius:12px; padding:8px 10px; margin-top:8px; background:#fafafa; }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <div class="header">
+        <div>
+            <img src="logo-sabores.png" alt="logo"></div>
+          <strong>Asistente de Sabores del Guijo Casa Alonso</strong></br>
+          <small>Creado por: Triangle AI</small>
+        <div style="margin-left:auto">
+          <label>Idioma:
+            <select id="lang">
+              <option value="español">Español</option>
+              <option value="inglés">Inglés</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <div id="messages" class="messages"></div>
+
+      <div class="composer">
+        <input id="input" placeholder="Escribe tu mensaje..." style="flex:1" />
+        <button id="send">Enviar</button>
+      </div>
+    </div>
+
+    <script>
+      const $messages = document.getElementById('messages');
+      const $input = document.getElementById('input');
+      const $send = document.getElementById('send');
+      const $lang = document.getElementById('lang');
+
+      const history = []; // {role:'user'|'assistant', content:string}
+
+      function addMessage(content, who) {
+        const div = document.createElement('div');
+        div.className = 'msg ' + (who === 'user' ? 'user' : 'bot');
+        div.textContent = content;
+        $messages.appendChild(div);
+        $messages.scrollTop = $messages.scrollHeight;
+      }
+
+      async function sendMessage() {
+        const text = $input.value.trim();
+        if (!text) return;
+        addMessage(text, 'user');
+        history.push({ role: 'user', content: text });
+        $input.value = '';
+
+        addMessage('Pensando…', 'assistant');
+        const thinkingBubble = $messages.lastChild;
+
+        try {
+          console.log("Enviando mensaje:", { messages: history, language: $lang.value });
+
+          const res = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ messages: history, language: $lang.value })
+          });
+          const data = await res.json();
+          console.log("Respuesta recibida:", data);
+          thinkingBubble.remove();
+          addAssistantMessage(data.reply || 'Lo siento, hemos tenido un error. Intente más tarde, o pruebe llamando al 927 56 02 92. Gracias por su paciencia.');
+          history.push({ role: 'assistant', content: data.reply || '' });
+        } catch (err) {
+          thinkingBubble.remove();
+          addMessage('Error de red o del servidor: ' + err.message, 'assistant');
+        }
+      }
+
+      $send.addEventListener('click', sendMessage);
+      $input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') sendMessage();
+      });
+
+      // Mensaje de bienvenida
+      addMessage('¡Hola! Soy el asistente de Sabores del Guijo Casa Alonso. ¿En qué puedo ayudarle?', 'assistant');
+    </script>
+    <a href="https://tienda.casa-alonso.es/" id="backBtn">⬅ Volver a la tienda</a>
+    <script>
+function escapeHtml(s){ return s.replace(/[&<>"]/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c])); }
+
+// Convierte texto con bullets y secciones a HTML simple
+function renderAssistant(text){
+  const div = document.createElement('div');
+  div.className = 'chat-msg assistant';
+
+  // separar sugerencias (última línea "Sugerencias: a | b | c")
+  let sugg = [];
+  const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+  const rest = [];
+  for (const l of lines) {
+    if (l.toLowerCase().startsWith('sugerencias:')) {
+      const raw = l.split(':').slice(1).join(':').trim();
+      sugg = raw.split('|').map(s => s.trim()).filter(Boolean);
+    } else {
+      rest.push(l);
+    }
+  }
+
+  // detectar "Recomendación:"
+  let recHtml = '';
+  const rest2 = [];
+  for (const l of rest) {
+    if (l.toLowerCase().startsWith('recomendacion:') || l.toLowerCase().startsWith('recomendación:')) {
+      const content = escapeHtml(l.split(':').slice(1).join(':').trim());
+      recHtml += `<div class="product-card"><strong>Recomendación:</strong> ${content}</div>`;
+    } else {
+      rest2.push(l);
+    }
+  }
+
+  // primera línea como resumen, resto como bullets si empiezan con "•"
+  const first = escapeHtml(rest2[0] || '');
+  const bodyLines = rest2.slice(1);
+
+  let html = '';
+  if (first) html += `<div>${first}</div>`;
+
+  const bullets = bodyLines.filter(l => l.startsWith('•'));
+  const others  = bodyLines.filter(l => !l.startsWith('•'));
+
+  if (bullets.length){
+    html += '<ul>' + bullets.map(b => `<li>${escapeHtml(b.slice(1).trim())}</li>`).join('') + '</ul>';
+  }
+  if (others.length){
+    html += others.map(o => `<div>${escapeHtml(o)}</div>`).join('');
+  }
+  if (recHtml) html += recHtml;
+
+  // sugerencias -> botones
+  if (sugg.length){
+    html += '<div class="suggestions">' + sugg.map(s => `<button type="button" data-sug="${escapeHtml(s)}">${escapeHtml(s)}</button>`).join('') + '</div>';
+  }
+
+  div.innerHTML = html;
+
+  // Click en sugerencias: envía el texto del botón como nuevo mensaje del usuario
+  div.querySelectorAll('.suggestions button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const t = btn.getAttribute('data-sug');
+      // aquí llama a tu función existente que envía un mensaje del usuario:
+      sendQuick(t);
+    });
+  });
+
+  return div;
+}
+
+// Envía un mensaje de usuario desde una sugerencia
+function sendQuick(text){
+  // Pinta burbuja de usuario (opcional)
+  addMessage(text, 'user');
+  // Llama a tu función que hace fetch a /api/chat
+  // Si tu función original se llama sendMessage() leyendo de un input, crea otra:
+  sendTextToChat(text);
+}
+
+// Ejemplo: si tu función original esperaba leer de un input, extrae el POST a esta
+async function sendTextToChat(text){
+  const res = await fetch('/api/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      sessionId: localStorage.getItem('sg_session') || 'anon',
+      language: 'auto',
+      messages: [{ role:'user', content: text }]
+    })
+  });
+  const data = await res.json();
+  addAssistantMessage(data.reply || '(sin respuesta)');
+}
+
+// Envoltorios para añadir mensajes al chat
+function addAssistantMessage(text){
+  const container = document.getElementById('messages'); // tu contenedor de mensajes
+  container.appendChild(renderAssistant(text));
+  container.scrollTop = container.scrollHeight;
+}
+</script>
+  </body>
+</html>

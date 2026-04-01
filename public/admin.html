@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <title>Panel — Sabores del Guijo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <style>
+    :root { --verde:#021325; --negro:#000; --gris:#f6f6f6; }
+    body { font-family: system-ui, -apple-system, Arial, sans-serif; margin:0; background:#fff; color:#111; }
+    header { display:flex; align-items:center; gap:12px; padding:14px 16px; border-bottom:2px solid var(--negro); background:var(--verde); color:#fff; }
+    header img { height:36px; border-radius:6px; background:#021325; padding:4px; }
+    right img {height: 55px; border-radius: 6px; background: #fff; padding:4px; }
+    h1 { font-size:18px; margin:0; }
+    h2 { font-size:20px; margin-left:20px; color: #fff;}
+    .wrap { max-width:1100px; margin:0 auto; padding:16px; }
+    .grid { display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
+    .card { border:2px solid var(--negro); border-radius:12px; overflow:hidden; background:#fff; }
+    .card h2 { margin:0; padding:10px 12px; border-bottom:2px solid var(--negro); background:#021325; }
+    .card .content { padding:12px; }
+    table { width:100%; border-collapse:collapse; }
+    th, td { padding:8px 10px; border-bottom:1px solid #ddd; font-size:14px; }
+    th { text-align:left; background:#fafafa; }
+    .pill { display:inline-block; padding:8px 16px; border:1px solid var(--negro); border-radius:999px; font-size:12px; background:#fff; }
+    .muted { color:#ffffff; font-size:12px; }
+    .list { max-height:380px; overflow:auto; background:#fff; border:1px solid #eee; border-radius:8px; }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="logo-triangle ai.png" alt="Logo"/>
+    <div>
+      <h1>Triangle AI - Panel de preguntas</h1>
+      <div class="muted">Análisis de lo que preguntan los clientes al chatbot</div>
+    </div>
+    <form method="post" action="/logout" style="margin-left:auto">
+     <button class="pill" style="cursor:pointer; background:#fff" type="submit">Cerrar sesión</button>
+    </form>
+    <div> 
+        <h2>Sabores del Guijo</h2>
+    </div>
+  <right>
+  <img src="logo-sabores.png" alt="logo-sabores"/>
+  <right/>
+  </header>
+
+  <div class="wrap">
+    <div style="display:flex; gap:12px; align-items:center; margin-bottom:12px; flex-wrap:wrap">
+      <div>
+        <label class="muted">Desde</label><br/>
+        <input type="date" id="fromDate">
+      </div>
+      <div>
+        <label class="muted">Hasta</label><br/>
+        <input type="date" id="toDate">
+      </div>
+      <button id="apply" class="pill" style="cursor:pointer; background:#fff">Aplicar</button>
+      <button id="btnToday" class="pill" style="cursor:pointer; background:#fff">Hoy</button>
+      <button id="btnYesterday" class="pill" style="cursor:pointer; background:#fff">Ayer</button> 
+      <button data-preset="7" class="pill" style="cursor:pointer; background:#fff">Últimos 7 días</button>
+      <button data-preset="30" class="pill" style="cursor:pointer; background:#fff">Últimos 30 días</button>
+      <button data-preset="all" class="pill" style="cursor:pointer; background:#fff">Todo</button>
+      <button id="exportCsv" class="pill" style="cursor:pointer; background:#9bd4ff">Exportar CSV</button>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <h2>Productos más populares (por nº de preguntas)</h2>
+        <div class="content">
+          <table id="tablaTop">
+            <thead><tr><th>Producto</th><th>Preguntas</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Interés en productos NO disponibles</h2>
+        <div class="content">
+          <table id="tablaMissing">
+            <thead><tr><th>Palabra clave</th><th>Veces</th></tr></thead>
+            <tbody></tbody>
+          </table>
+          <p class="muted">Ej.: si mucha gente pregunta por “mango” o “uva”, puede ser una oportunidad de producto.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Volumen de preguntas por día</h2>
+        <div class="content">
+          <table id="tablaVol">
+            <thead><tr><th>Fecha</th><th>Preguntas</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Últimas preguntas</h2>
+        <div class="content">
+          <div class="list" id="listaPreguntas"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  function buildQuery() {
+    const from = document.getElementById('fromDate').value;
+    const to = document.getElementById('toDate').value;
+    const params = new URLSearchParams();
+    if (from) params.set('from', from);
+    if (to) params.set('to', to);
+    const qs = params.toString();
+    return qs ? `?${qs}` : '';
+  }
+
+  async function loadAnalytics() {
+    const qs = buildQuery();
+
+    const outTop = document.querySelector('#tablaTop tbody');
+    const outMiss = document.querySelector('#tablaMissing tbody');
+    const outVol = document.querySelector('#tablaVol tbody');
+    const list = document.getElementById('listaPreguntas');
+
+    try {
+      const [aRes, qRes] = await Promise.all([
+        fetch('/api/analytics' + qs),
+        fetch('/api/questions' + qs),
+      ]);
+
+      if (!aRes.ok || !qRes.ok) {
+        const txt = `API error: analytics=${aRes.status} questions=${qRes.status}`;
+        outTop.innerHTML = `<tr><td colspan="2">${txt}</td></tr>`;
+        outMiss.innerHTML = `<tr><td colspan="2">${txt}</td></tr>`;
+        outVol.innerHTML = `<tr><td colspan="2">${txt}</td></tr>`;
+        list.innerHTML = `<div style="color:#b00">${txt}</div>`;
+        return;
+      }
+
+      const a = await aRes.json();
+      const q = await qRes.json();
+
+      outTop.innerHTML = (a.topProducts && a.topProducts.length)
+        ? a.topProducts.map(r => `<tr><td>${r.name}</td><td>${r.count}</td></tr>`).join('')
+        : `<tr><td colspan="2">Sin datos en este rango</td></tr>`;
+
+      outMiss.innerHTML = (a.missingInterests && a.missingInterests.length)
+        ? a.missingInterests.map(r => `<tr><td>${r.token}</td><td>${r.count}</td></tr>`).join('')
+        : `<tr><td colspan="2">Sin datos en este rango</td></tr>`;
+
+      outVol.innerHTML = (a.volumePerDay && a.volumePerDay.length)
+        ? a.volumePerDay.map(r => `<tr><td>${r.day}</td><td>${r.count}</td></tr>`).join('')
+        : `<tr><td colspan="2">Sin datos en este rango</td></tr>`;
+
+      list.innerHTML = (q.items && q.items.length)
+        ? q.items.slice(-200).reverse().map(m => {
+            const prod = m.matchedProduct ? `<span class="pill">Producto: ${m.matchedProduct}</span>` : '';
+            const miss = (m.missingTokens && m.missingTokens.length) ? `<span class="pill">Faltantes: ${m.missingTokens.join(', ')}</span>` : '';
+            return `
+              <div style="border-bottom:1px solid #eee; padding:8px 10px">
+                <div class="muted">${new Date(m.ts).toLocaleString()}</div>
+                <div style="margin:4px 0">${m.text}</div>
+                <div style="display:flex; gap:6px; flex-wrap:wrap">${prod} ${miss}</div>
+              </div>`;
+          }).join('')
+        : `<div class="muted">Sin preguntas en este rango.</div>`;
+    } catch (err) {
+      outTop.innerHTML = `<tr><td colspan="2">Error: ${err.message}</td></tr>`;
+      outMiss.innerHTML = `<tr><td colspan="2">Error: ${err.message}</td></tr>`;
+      outVol.innerHTML = `<tr><td colspan="2">Error: ${err.message}</td></tr>`;
+      list.innerHTML = `<div style="color:#b00">Error: ${err.message}</div>`;
+    }
+  }
+
+  // Listeners
+  document.getElementById('apply').addEventListener('click', loadAnalytics);
+  document.querySelectorAll('[data-preset]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const preset = btn.getAttribute('data-preset');
+      const from = document.getElementById('fromDate');
+      const to = document.getElementById('toDate');
+
+      const today = new Date();
+      const ymd = d => d.toISOString().slice(0,10);
+
+      if (preset === 'all') {
+        from.value = '';
+        to.value = '';
+      } else {
+        const days = parseInt(preset, 10);
+        const start = new Date(today);
+        start.setDate(today.getDate() - (days - 1)); // incluye hoy
+        from.value = ymd(start);
+        to.value = ymd(today);
+      }
+      loadAnalytics();
+    });
+  });
+
+  // Carga inicial (últimos 30 días por defecto)
+  (function initDefaultRange(){
+    const to = document.getElementById('toDate');
+    const from = document.getElementById('fromDate');
+    const today = new Date();
+    const start = new Date(today);
+    start.setDate(today.getDate() - 29);
+    const ymd = d => d.toISOString().slice(0,10);
+    from.value = ymd(start);
+    to.value = ymd(today);
+  })();
+  document.getElementById('exportCsv').addEventListener('click', () => {
+    const qs = buildQuery(); // ?from=YYYY-MM-DD&to=YYYY-MM-DD
+    window.location.href = '/api/export' + qs;
+  });
+  function localTodayYMD() {
+  const now = new Date();
+  const tz = now.getTimezoneOffset(); // minutos
+  const local = new Date(now.getTime() - tz * 60000);
+  return local.toISOString().slice(0, 10);
+}
+
+// Refresca panel (ajusta nombres si tus funciones difieren)
+async function refreshPanel() {
+  const from = document.getElementById('from')?.value || '';
+  const to   = document.getElementById('to')?.value || '';
+  await Promise.all([
+    loadAnalytics(from, to),
+    loadQuestions(from, to),
+  ]);
+}
+
+loadAnalytics();
+  setInterval(loadAnalytics, 30000);
+ </script>
+  <script>
+(function () {
+  // YYYY-MM-DD local (sin líos de zona horaria)
+  function ymdTodayLocal() {
+    const now = new Date();
+    const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+    return local.toISOString().slice(0, 10);
+  }
+  // YYYY-MM-DD de AYER
+  function ymdYesterdayLocal() {
+    const now = new Date();
+    const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+    local.setDate(local.getDate() - 1);
+    return local.toISOString().slice(0, 10);
+  }
+
+  function setDateInputs(from, to) {
+    const fromEl = document.getElementById('from') || document.querySelector('input[type="date"]');
+    let toEl = document.getElementById('to');
+    if (!toEl) {
+      const dates = document.querySelectorAll('input[type="date"]');
+      if (dates.length > 1) toEl = dates[1];
+      else toEl = fromEl;
+    }
+    if (fromEl) {
+      fromEl.value = from;
+      fromEl.dispatchEvent(new Event('input', { bubbles:true }));
+      fromEl.dispatchEvent(new Event('change', { bubbles:true }));
+    }
+    if (toEl) {
+      toEl.value = to;
+      toEl.dispatchEvent(new Event('input', { bubbles:true }));
+      toEl.dispatchEvent(new Event('change', { bubbles:true }));
+    }
+    return { fromEl, toEl };
+  }
+
+  // Intenta refrescar con tu lógica existente
+  function tryRefresh() {
+    // A) Función global típica
+    if (typeof window.refreshPanel === 'function') { window.refreshPanel(); return true; }
+    if (typeof window.applyFilters === 'function') { window.applyFilters(); return true; }
+    if (typeof window.onApplyFilters === 'function') { window.onApplyFilters(); return true; }
+
+    // B) Botón "Aplicar" por id o por texto
+    const btnApply = document.getElementById('btnApply')
+      || [...document.querySelectorAll('button, input[type=button], input[type=submit]')]
+         .find(b => (b.textContent || b.value || '').trim().toLowerCase().includes('aplicar'));
+    if (btnApply) { btnApply.click(); return true; }
+
+    // C) Submit del formulario de filtros
+    const form =
+      document.getElementById('filtersForm') ||
+      (document.getElementById('from') && document.getElementById('from').form) ||
+      (document.getElementById('to') && document.getElementById('to').form) ||
+      document.querySelector('form');
+    if (form) { (form.requestSubmit ? form.requestSubmit() : form.submit()); return true; }
+
+    return false;
+  }
+
+  // Fallback duro: recarga con parámetros en URL
+  function hardReloadWithParams(from, to) {
+    const url = new URL(location.href);
+    url.searchParams.set('from', from);
+    url.searchParams.set('to', to);
+    location.href = url.toString();
+  }
+
+  // Al cargar la página: si hay ?from & ?to, los aplica y refresca
+  document.addEventListener('DOMContentLoaded', () => {
+    const url = new URL(location.href);
+    const qFrom = url.searchParams.get('from');
+    const qTo   = url.searchParams.get('to');
+
+    if (qFrom && qTo) {
+      setDateInputs(qFrom, qTo);
+      // intenta refrescar con tu lógica
+      setTimeout(() => { tryRefresh(); }, 50);
+    }
+
+    // ---------- Botón HOY (lo crea si no existe) ----------
+    let btnToday = document.getElementById('btnToday');
+    if (!btnToday) {
+      const filtersBar = document.querySelector('.filters') || document.body;
+      btnToday = document.createElement('button');
+      btnToday.id = 'btnToday';
+      btnToday.type = 'button';
+      btnToday.textContent = 'Hoy';
+      btnToday.style.marginLeft = '6px';
+      btnToday.style.border = '2px solid #000';
+      btnToday.style.borderRadius = '10px';
+      btnToday.style.background = '#fff';
+      btnToday.style.padding = '6px 10px';
+      btnToday.style.cursor = 'pointer';
+      filtersBar.appendChild(btnToday);
+    }
+
+    btnToday.addEventListener('click', () => {
+      const ymd = ymdTodayLocal();
+      setDateInputs(ymd, ymd);
+
+      // Intento de refresco "blando"
+      const ok = tryRefresh();
+
+      // Si nada parece reaccionar, recarga con parámetros en URL
+      setTimeout(() => {
+        if (!ok) {
+          hardReloadWithParams(ymd, ymd);
+        }
+      }, 400);
+    });
+
+    // ---------- Botón AYER (lo crea si no existe) ----------
+    let btnYesterday = document.getElementById('btnYesterday');
+    if (!btnYesterday) {
+      const filtersBar = document.querySelector('.filters') || document.body;
+      btnYesterday = document.createElement('button');
+      btnYesterday.id = 'btnYesterday';
+      btnYesterday.type = 'button';
+      btnYesterday.textContent = 'Ayer';
+      btnYesterday.style.marginLeft = '6px';
+      btnYesterday.style.border = '2px solid #000';
+      btnYesterday.style.borderRadius = '10px';
+      btnYesterday.style.background = '#fff';
+      btnYesterday.style.padding = '6px 10px';
+      btnYesterday.style.cursor = 'pointer';
+      filtersBar.appendChild(btnYesterday);
+    }
+
+    btnYesterday.addEventListener('click', () => {
+      const ymd = ymdYesterdayLocal();
+      setDateInputs(ymd, ymd);
+
+      const ok = tryRefresh();
+
+      setTimeout(() => {
+        if (!ok) {
+          hardReloadWithParams(ymd, ymd);
+        }
+      }, 400);
+    });
+
+  });
+})();
+</script>
+</body>
+</html>
