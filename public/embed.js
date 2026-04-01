@@ -1,77 +1,71 @@
-(function(){
-  const BOT_ORIGIN = (document.currentScript && document.currentScript.dataset.bot) || 'https://bot.casa-alonso.es';
-  const START_OPEN = (document.currentScript && document.currentScript.dataset.open === 'true');
+(function () {
+  const script = document.currentScript;
+  const BOT_ORIGIN = script.getAttribute("data-bot") || "https://sabores-bot.onrender.com";
 
-  // Styles
-  const css = `
-  .sg-widget-btn {
-    position: fixed; right: 20px; bottom: 20px; z-index: 999999;
-    background:#2a7c3f; color:#fff; border:2px solid #000; border-radius:999px;
-    padding: 10px 14px; font-weight:700; cursor:pointer; box-shadow:0 6px 20px rgba(0,0,0,.2);
-  }
-  .sg-widget-btn:hover{ filter: brightness(1.05); }
-  .sg-widget-frame {
-    position: fixed; right: 20px; bottom: 80px; width: 380px; height: 560px; z-index: 999999;
-    border-radius:14px; overflow:hidden; border:2px solid #000; box-shadow:0 12px 30px rgba(0,0,0,.25);
-    background:#fff; display:none;
-  }
-  .sg-widget-frame.is-open { display:block; }
-  .sg-widget-close {
-    position: absolute; top: 8px; right: 8px; z-index: 2; background:#fff; border:1px solid #000;
-    border-radius:999px; padding:4px 8px; font-size:12px; cursor:pointer;
-  }
-  @media (max-width: 520px){
-    .sg-widget-frame { right:10px; bottom:70px; width: calc(100vw - 20px); height: 70vh; }
-    .sg-widget-btn { right:10px; bottom:10px; }
-  }`;
+  // CONTENEDOR
+  const wrapper = document.createElement("div");
+  wrapper.style.position = "fixed";
+  wrapper.style.bottom = "20px";
+  wrapper.style.right = "20px";
+  wrapper.style.zIndex = "9999";
 
-  const style = document.createElement('style');
-  style.textContent = css;
-  document.head.appendChild(style);
+  // BURBUJA TEXTO
+  const bubble = document.createElement("div");
+  bubble.innerText = "¿Necesitas ayuda?";
+  bubble.style.background = "#fff";
+  bubble.style.color = "#333";
+  bubble.style.padding = "8px 12px";
+  bubble.style.borderRadius = "20px";
+  bubble.style.marginBottom = "8px";
+  bubble.style.fontSize = "13px";
+  bubble.style.boxShadow = "0 2px 8px rgba(0,0,0,0.2)";
+  bubble.style.fontFamily = "sans-serif";
 
-  // Button
-  const btn = document.createElement('button');
-  btn.className = 'sg-widget-btn';
-  btn.type = 'button';
-  btn.setAttribute('aria-label','Abrir asistente');
-  btn.textContent = '💬 Ayuda';
-  document.body.appendChild(btn);
+  // BOTÓN (LOGO)
+  const button = document.createElement("img");
+  button.src = BOT_ORIGIN + "/logo-sabores.png"; // 👈 usa tu logo
+  button.style.width = "60px";
+  button.style.height = "60px";
+  button.style.borderRadius = "50%";
+  button.style.cursor = "pointer";
+  button.style.boxShadow = "0 4px 12px rgba(0,0,0,0.3)";
+  button.style.background = "#fff";
+  button.style.objectFit = "cover";
 
-  // Frame
-  const frameWrap = document.createElement('div');
-  frameWrap.className = 'sg-widget-frame';
-  const close = document.createElement('button');
-  close.className = 'sg-widget-close';
-  close.textContent = '✕';
-  const iframe = document.createElement('iframe');
-  iframe.src = BOT_ORIGIN + '/embed';
-  iframe.title = 'Asistente Sabores del Guijo';
-  iframe.style.width = '100%';
-  iframe.style.height = '100%';
-  iframe.style.border = '0';
+  // CONTENEDOR CHAT
+  const container = document.createElement("div");
+  container.style.position = "fixed";
+  container.style.bottom = "90px";
+  container.style.right = "20px";
+  container.style.width = "350px";
+  container.style.height = "500px";
+  container.style.background = "#fff";
+  container.style.borderRadius = "12px";
+  container.style.boxShadow = "0 10px 30px rgba(0,0,0,0.3)";
+  container.style.overflow = "hidden";
+  container.style.display = "none";
+  container.style.zIndex = "9999";
 
-  frameWrap.appendChild(close);
-  frameWrap.appendChild(iframe);
-  document.body.appendChild(frameWrap);
+  // iframe
+  const iframe = document.createElement("iframe");
+  iframe.src = BOT_ORIGIN + "/embed";
+  iframe.style.width = "100%";
+  iframe.style.height = "100%";
+  iframe.style.border = "none";
 
-  function openWidget(){ frameWrap.classList.add('is-open'); }
-  function closeWidget(){ frameWrap.classList.remove('is-open'); }
+  container.appendChild(iframe);
 
-  btn.addEventListener('click', () => {
-    if (frameWrap.classList.contains('is-open')) closeWidget(); else openWidget();
-  });
-  close.addEventListener('click', closeWidget);
+  // abrir/cerrar
+  let open = false;
+  button.onclick = () => {
+    open = !open;
+    container.style.display = open ? "block" : "none";
+    bubble.style.display = "none"; // ocultar mensaje al abrir
+  };
 
-  if (START_OPEN) openWidget();
-
-  // (Opcional) permitir que el iframe pida resize vía postMessage
-  window.addEventListener('message', (e) => {
-    // seguridad básica
-    if (!String(e.origin).startsWith(BOT_ORIGIN)) return;
-    const { type, width, height } = e.data || {};
-    if (type === 'sg-resize' && width && height) {
-      frameWrap.style.width = width + 'px';
-      frameWrap.style.height = height + 'px';
-    }
-  });
+  // montar
+  wrapper.appendChild(bubble);
+  wrapper.appendChild(button);
+  document.body.appendChild(wrapper);
+  document.body.appendChild(container);
 })();
