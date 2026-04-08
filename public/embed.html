@@ -37,13 +37,13 @@
       <div class="header">
         <div>
             <img src="logo-sabores.png" alt="logo"></div>
-          <strong>Asistente de Sabores del Guijo Casa Alonso</strong></br>
-          <small>Creado por: Triangle AI</small>
+          <strong id="chatTitle">Asistente de Sabores del Guijo Casa Alonso</strong></br>
+          <small id="chatSubtitle">Creado por: Triangle AI</small>
         <div style="margin-left:auto">
           <label>Idioma:
             <select id="lang">
               <option value="español">Español</option>
-              <option value="inglés">Inglés</option>
+              <option value="inglés">English</option>
             </select>
           </label>
         </div>
@@ -52,8 +52,8 @@
       <div id="messages" class="messages"></div>
 
       <div class="composer">
-        <input id="input" placeholder="Escribe tu mensaje..." style="flex:1" />
-        <button id="send">Enviar</button>
+       <input id="input" placeholder="Escribe tu mensaje..." style="flex:1" />
+<button id="send">Enviar</button>
       </div>
     </div>
 
@@ -62,6 +62,20 @@
       const $input = document.getElementById('input');
       const $send = document.getElementById('send');
       const $lang = document.getElementById('lang');
+
+if (langLabel) {
+    langLabel.childNodes[0].nodeValue = t('langLabel') + ' ';
+  }
+
+  if ($lang.options[0]) $lang.options[0].textContent = t('optionEs');
+  if ($lang.options[1]) $lang.options[1].textContent = t('optionEn');
+
+  if (chatTitle) chatTitle.textContent = t('title');
+  if (chatSubtitle) chatSubtitle.textContent = t('subtitle');
+  if ($input) $input.placeholder = t('placeholder');
+  if ($send) $send.textContent = t('send');
+  if (backBtn) backBtn.textContent = t('back');
+
 
       const history = []; // {role:'user'|'assistant', content:string}
 
@@ -124,25 +138,31 @@ function renderAssistant(text){
   const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
   const rest = [];
   for (const l of lines) {
-    if (l.toLowerCase().startsWith('sugerencias:')) {
-      const raw = l.split(':').slice(1).join(':').trim();
-      sugg = raw.split('|').map(s => s.trim()).filter(Boolean);
-    } else {
-      rest.push(l);
-    }
+  const lower = l.toLowerCase();
+  if (lower.startsWith('sugerencias:') || lower.startsWith('suggestions:')) {
+    const raw = l.split(':').slice(1).join(':').trim();
+    sugg = raw.split('|').map(s => s.trim()).filter(Boolean);
+  } else {
+    rest.push(l);
   }
+}
 
   // detectar "Recomendación:"
   let recHtml = '';
   const rest2 = [];
   for (const l of rest) {
-    if (l.toLowerCase().startsWith('recomendacion:') || l.toLowerCase().startsWith('recomendación:')) {
-      const content = escapeHtml(l.split(':').slice(1).join(':').trim());
-      recHtml += `<div class="product-card"><strong>Recomendación:</strong> ${content}</div>`;
-    } else {
-      rest2.push(l);
-    }
+  const lower = l.toLowerCase();
+  if (
+    lower.startsWith('recomendacion:') ||
+    lower.startsWith('recomendación:') ||
+    lower.startsWith('recommendation:')
+  ) {
+    const content = escapeHtml(l.split(':').slice(1).join(':').trim());
+    recHtml += `<div class="product-card"><strong>${escapeHtml(t('recommendation'))}</strong> ${content}</div>`;
+  } else {
+    rest2.push(l);
   }
+}
 
   // primera línea como resumen, resto como bullets si empiezan con "•"
   const first = escapeHtml(rest2[0] || '');
