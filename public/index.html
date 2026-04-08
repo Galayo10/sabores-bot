@@ -63,18 +63,7 @@
       const $send = document.getElementById('send');
       const $lang = document.getElementById('lang');
 
-if (langLabel) {
-    langLabel.childNodes[0].nodeValue = t('langLabel') + ' ';
-  }
 
-  if ($lang.options[0]) $lang.options[0].textContent = t('optionEs');
-  if ($lang.options[1]) $lang.options[1].textContent = t('optionEn');
-
-  if (chatTitle) chatTitle.textContent = t('title');
-  if (chatSubtitle) chatSubtitle.textContent = t('subtitle');
-  if ($input) $input.placeholder = t('placeholder');
-  if ($send) $send.textContent = t('send');
-  if (backBtn) backBtn.textContent = t('back');
 
 
       const history = []; // {role:'user'|'assistant', content:string}
@@ -137,9 +126,8 @@ function renderAssistant(text){
   let sugg = [];
   const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
   const rest = [];
-  for (const l of lines) {
-  const lower = l.toLowerCase();
-  if (lower.startsWith('sugerencias:') || lower.startsWith('suggestions:')) {
+ for (const l of lines) {
+  if (l.toLowerCase().startsWith('sugerencias:')) {
     const raw = l.split(':').slice(1).join(':').trim();
     sugg = raw.split('|').map(s => s.trim()).filter(Boolean);
   } else {
@@ -151,14 +139,9 @@ function renderAssistant(text){
   let recHtml = '';
   const rest2 = [];
   for (const l of rest) {
-  const lower = l.toLowerCase();
-  if (
-    lower.startsWith('recomendacion:') ||
-    lower.startsWith('recomendación:') ||
-    lower.startsWith('recommendation:')
-  ) {
+  if (l.toLowerCase().startsWith('recomendacion:') || l.toLowerCase().startsWith('recomendación:')) {
     const content = escapeHtml(l.split(':').slice(1).join(':').trim());
-    recHtml += `<div class="product-card"><strong>${escapeHtml(t('recommendation'))}</strong> ${content}</div>`;
+    recHtml += `<div class="product-card"><strong>Recomendación:</strong> ${content}</div>`;
   } else {
     rest2.push(l);
   }
