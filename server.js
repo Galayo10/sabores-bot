@@ -494,11 +494,8 @@ app.post('/api/chat', async (req, res) => {
     const textoUser = String(lastUser.content || '').trim();
     if (!textoUser) return res.json({ reply: '(Sin respuesta)' });
 
-    // Auto-idioma
-    const langGuess =
-      /[a-z]/i.test(textoUser) && /[áéíóúñü]/i.test(textoUser) ? 'español'
-      : /[a-z]/i.test(textoUser) ? 'inglés'
-      : (language === 'auto' ? 'español' : language);
+    const selectedLanguage =
+     language === 'inglés' ? 'inglés' : 'español';
 
     // Intents y patrones
     const reAdd = /(quiero|anadir|añade|pon|agrega|sumar)\s+(\d+)\s+(.+)/i;
@@ -526,7 +523,7 @@ app.post('/api/chat', async (req, res) => {
       ts: new Date().toISOString(),
       sessionId,
       text: textoUser,
-      language: langGuess,
+      language: selectedLanguage,
       intent,
       matchedProduct: cand ? cand.Producto : null,
       missingTokens: missing,
@@ -695,6 +692,16 @@ Respuesta breve...
 • Detalle 3
 Recomendación: Mermelada de Higo 
 Sugerencias: Ver carrito | Añadir 1 Higo | Envíos a Madrid
+
+Regla crítica de idioma:
+- Debes responder EXCLUSIVAMENTE en ${selectedLanguage}.
+- No mezcles idiomas.
+- Si ${selectedLanguage} es "inglés", traduce también los nombres de producto, categorías y descripciones al inglés natural.
+- Si necesitas dar el nombre original del catálogo, puedes ponerlo entre paréntesis después de la traducción.
+- Si ${selectedLanguage} es "español", responde todo en español.
+
+Ejemplo si el idioma es inglés:
+Recommendation: Extra Fig Jam (Mermelada Extra de Higo)
 
 Catálogo (para nombrar bien):
 ${productosTexto}

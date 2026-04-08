@@ -192,17 +192,21 @@ function sendQuick(text){
 
 // Ejemplo: si tu función original esperaba leer de un input, extrae el POST a esta
 async function sendTextToChat(text){
+  history.push({ role:'user', content: text });
+
   const res = await fetch('/api/chat', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       sessionId: localStorage.getItem('sg_session') || 'anon',
-      language: 'auto',
-      messages: [{ role:'user', content: text }]
+      language: $lang.value,
+      messages: history
     })
   });
+
   const data = await res.json();
   addAssistantMessage(data.reply || '(sin respuesta)');
+  history.push({ role:'assistant', content: data.reply || '' });
 }
 
 // Envoltorios para añadir mensajes al chat
