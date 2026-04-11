@@ -503,7 +503,7 @@ app.post('/api/chat', async (req, res) => {
     const reVac = /^(vaciar carrito|vaciar|limpiar carrito)$/i;
     const reConf = /^(confirmar pedido|confirmar|finalizar pedido)$/i;
     const reProductoQ =
-      /(teneis|tieneis|tenéis|hay|venden|vendeis|vendéis|informacion|información|hablar|puedes hablar|me puedes hablar).*(mermelada|licor|vinagre|membrillo)s?\s+(de\s+)?/i;
+  /(teneis|tieneis|tenéis|hay|venden|vendeis|vendéis|informacion|información|hablar|puedes hablar|me puedes hablar|do you have|do you sell|tell me about|information about|can you tell me|what is|what are).*(mermelada|licor|vinagre|membrillo|jam|jams|liquor|liqueur|vinegar|quince)s?\s+(de\s+|about\s+)?/i;
 
     // Detección de producto/sabor (analítica)
     const cand = findCandidate(textoUser);
@@ -690,8 +690,8 @@ REGLA DE IDIOMA — MUY IMPORTANTE:
 REGLA DE PRIVACIDAD — MUY IMPORTANTE:
 - Si alguien te pregunta cómo estás hecho, qué tecnología usas, si eres ChatGPT, si usas OpenAI, qué modelo eres, cómo funciona el chatbot, o cualquier pregunta técnica sobre tu funcionamiento interno: NO lo reveles.
 - En ese caso responde EXACTAMENTE esto (en el idioma seleccionado):
-  - En español: "Soy el asistente de atención al cliente de Sabores del Guijo. Si estás interesado en tener un chatbot como este para tu negocio, contacta con Triangle AI en angelgalayo@hotmail.com."
-  - En inglés: "I'm the virtual assistant of Sabores del Guijo. If you're interested in having a chatbot like this for your business, contact Triangle AI at angelgalayo@hotmail.com."
+  - En español: "Soy el asistente de atención al cliente de Sabores del Guijo. Si estás interesado en tener un chatbot como este para tu negocio, contacta con Triangle AI en triangleai.contact@gmail.com."
+  - En inglés: "I'm the virtual assistant of Sabores del Guijo. If you're interested in having a chatbot like this for your business, contact Triangle AI at triangleai.contact@gmail.com."
 
   REGLA DE IDIOMA INCORRECTO:
 - Si el usuario escribe en un idioma distinto a ${selectedLanguage}, respóndele en ${selectedLanguage} con este mensaje:
@@ -768,8 +768,8 @@ app.get('/api/analytics', requireAuth, (req, res) => {
     const { from, to } = req.query;
     const data = (from || to) ? all.filter(m => inRange(m.ts, from, to)) : all;
 
-    const reProductoQ =
-      /(teneis|tieneis|tenéis|hay|venden|vendeis|vendéis|informacion|información|hablar|puedes hablar|me puedes hablar).*(mermelada|licor|vinagre|membrillo)s?\s+(de\s+)?/i;
+   const reProductoQ =
+  /(teneis|tieneis|tenéis|hay|venden|vendeis|vendéis|informacion|información|hablar|puedes hablar|me puedes hablar|do you have|do you sell|tell me about|information about|can you tell me|what is|what are).*(mermelada|licor|vinagre|membrillo|jam|jams|liquor|liqueur|vinegar|quince)s?\s+(de\s+|about\s+)?/i;
 
     const counts = {};
     const miss = {};
@@ -846,8 +846,8 @@ app.get('/api/export', requireAuth, (req, res) => {
   const { from, to } = req.query;
   const data = (from || to) ? all.filter(m => inRange(m.ts, from, to)) : all;
 
-  const reProductoQ =
-    /(teneis|tieneis|tenéis|hay|venden|vendeis|vendéis|informacion|información|hablar|puedes hablar|me puedes hablar).*(mermelada|licor|vinagre|membrillo)s?\s+(de\s+)?/i;
+ const reProductoQ =
+  /(teneis|tieneis|tenéis|hay|venden|vendeis|vendéis|informacion|información|hablar|puedes hablar|me puedes hablar|do you have|do you sell|tell me about|information about|can you tell me|what is|what are).*(mermelada|licor|vinagre|membrillo|jam|jams|liquor|liqueur|vinegar|quince)s?\s+(de\s+|about\s+)?/i;
 
   const counts = {};
   const miss = {};
