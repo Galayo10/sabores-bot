@@ -183,7 +183,7 @@ function renderAssistant(text){
   const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
   const rest = [];
  for (const l of lines) {
-  if (l.toLowerCase().startsWith('sugerencias:')) {
+  if (l.toLowerCase().startsWith('sugerencias:') || l.toLowerCase().startsWith('suggestions:')) {
     const raw = l.split(':').slice(1).join(':').trim();
     sugg = raw.split('|').map(s => s.trim()).filter(Boolean);
   } else {
@@ -197,7 +197,8 @@ function renderAssistant(text){
   for (const l of rest) {
   if (l.toLowerCase().startsWith('recomendacion:') || l.toLowerCase().startsWith('recomendación:') || l.toLowerCase().startsWith('recommendation:')) {
     const content = escapeHtml(l.split(':').slice(1).join(':').trim());
-    recHtml += `<div class="product-card"><strong>Recomendación:</strong> ${content}</div>`;
+   const recLabel = getLang() === 'inglés' ? 'Recommendation:' : 'Recomendación:';
+recHtml += `<div class="product-card"><strong>${recLabel}</strong> ${content}</div>`;
   } else {
     rest2.push(l);
   }
