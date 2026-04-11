@@ -701,7 +701,7 @@ Formatea SIEMPRE así:
 - Empieza con una frase breve (máx. 2 líneas) que responda directo.
 - Luego 3–6 viñetas "•" con detalles relevantes (sabores, formatos, sugerencias, envío).
 - Si procede, añade una sección "Recomendación:" con 1–3 productos concretos (nombre exacto del catálogo).
-- Termina con una línea "Sugerencias:" con 2–4 acciones cortas separadas por " | " (ej.: "Ver envío | Añadir 2 higo | Ver carrito").
+- Termina con una línea "Sugerencias:" con 2–4 acciones cortas separadas por " | " (ej.: "Ver envío | Añadir 1 higo | Ver carrito"). Es esencial que hagas esto tanto en inglés como en español.
 
 Ejemplo de estructura:
 Respuesta breve...

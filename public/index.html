@@ -195,7 +195,7 @@ function renderAssistant(text){
   let recHtml = '';
   const rest2 = [];
   for (const l of rest) {
-  if (l.toLowerCase().startsWith('recomendacion:') || l.toLowerCase().startsWith('recomendación:')) {
+  if (l.toLowerCase().startsWith('recomendacion:') || l.toLowerCase().startsWith('recomendación:') || l.toLowerCase().startsWith('recommendation:')) {
     const content = escapeHtml(l.split(':').slice(1).join(':').trim());
     recHtml += `<div class="product-card"><strong>Recomendación:</strong> ${content}</div>`;
   } else {
