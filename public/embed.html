@@ -35,19 +35,22 @@
   <body>
     <div class="app">
       <div class="header">
-        <div>
-            <img src="logo-sabores.png" alt="logo"></div>
-          <strong>Asistente de Sabores del Guijo Casa Alonso</strong></br>
-          <small>Creado por: Triangle AI</small>
-        <div style="margin-left:auto">
-          <label>Idioma:
-            <select id="lang">
-              <option value="español">Español</option>
-              <option value="inglés">English</option>
-            </select>
-          </label>
-        </div>
-      </div>
+  <div>
+    <img src="logo-sabores.png" alt="logo">
+  </div>
+  <div>
+    <strong id="titleText">Asistente de Sabores del Guijo Casa Alonso</strong><br>
+    <small id="createdBy">Creado por: Triangle AI</small>
+  </div>
+  <div style="margin-left:auto">
+    <label id="langLabel">Idioma:
+      <select id="lang">
+        <option value="español">Español</option>
+        <option value="inglés">English</option>
+      </select>
+    </label>
+  </div>
+</div>
 
       <div id="messages" class="messages"></div>
 
@@ -83,7 +86,7 @@
         history.push({ role: 'user', content: text });
         $input.value = '';
 
-        addMessage('Pensando…', 'assistant');
+        addMessage(i18n[getLang()].thinking, 'assistant');
         const thinkingBubble = $messages.lastChild;
 
         try {
@@ -112,31 +115,43 @@
 
       // Mensaje de bienvenida
        const i18n = {
-        'español': {
-          welcome: '¡Hola! Soy el asistente de Sabores del Guijo Casa Alonso. ¿En qué puedo ayudarle?',
-          placeholder: 'Escribe tu mensaje...',
-          sendBtn: 'Enviar',
-          thinking: 'Pensando…',
-          error: 'Lo siento, hemos tenido un error. Intente más tarde, o pruebe llamando al 927 56 02 92.',
-        },
-        'inglés': {
-          welcome: 'Hello! I\'m the assistant of Sabores del Guijo Casa Alonso. How can I help you?',
-          placeholder: 'Type your message...',
-          sendBtn: 'Send',
-          thinking: 'Thinking…',
-          error: 'Sorry, we had an error. Please try again later or call us at +34 927 56 02 92.',
-        }
-      };
+  'español': {
+    welcome: '¡Hola! Soy el asistente de Sabores del Guijo Casa Alonso. ¿En qué puedo ayudarle?',
+    placeholder: 'Escribe tu mensaje...',
+    sendBtn: 'Enviar',
+    thinking: 'Pensando…',
+    error: 'Lo siento, hemos tenido un error. Intente más tarde, o pruebe llamando al 927 56 02 92.',
+    title: 'Asistente de Sabores del Guijo Casa Alonso',
+    createdBy: 'Creado por: Triangle AI',
+    langLabel: 'Idioma:',
+    backBtn: '⬅ Volver a la tienda',
+  },
+  'inglés': {
+    welcome: 'Hello! I\'m the assistant of Sabores del Guijo Casa Alonso. How can I help you?',
+    placeholder: 'Type your message...',
+    sendBtn: 'Send',
+    thinking: 'Thinking…',
+    error: 'Sorry, we had an error. Please try again later or call us at +34 927 56 02 92.',
+    title: 'Assistant of Sabores del Guijo Casa Alonso',
+    createdBy: 'Created by: Triangle AI',
+    langLabel: 'Language:',
+    backBtn: '⬅ Back to the shop',
+  }
+};
 
       function getLang() {
         return $lang.value === 'inglés' ? 'inglés' : 'español';
       }
 
       function applyLanguage() {
-        const t = i18n[getLang()];
-        $input.placeholder = t.placeholder;
-        $send.textContent = t.sendBtn;
-      }
+  const t = i18n[getLang()];
+  $input.placeholder = t.placeholder;
+  $send.textContent = t.sendBtn;
+  document.getElementById('titleText').textContent = t.title;
+  document.getElementById('createdBy').textContent = t.createdBy;
+  document.getElementById('langLabel').childNodes[0].textContent = t.langLabel;
+  document.getElementById('backBtnText').textContent = t.backBtn;
+}
 
       // Mensaje de bienvenida
       function showWelcome() {
@@ -154,7 +169,7 @@
       applyLanguage();
       showWelcome();
     </script>
-    <a href="https://tienda.casa-alonso.es/" id="backBtn">⬅ Volver a la tienda</a>
+    <a href="https://tienda.casa-alonso.es/" id="backBtn"><span id="backBtnText">⬅ Volver a la tienda</span></a>
     <script>
 function escapeHtml(s){ return s.replace(/[&<>"]/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c])); }
 
