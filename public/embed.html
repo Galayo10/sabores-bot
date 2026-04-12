@@ -166,10 +166,7 @@
       });
 
       // Arranque inicial
-      $lang.value = 'español';
-applyLanguage();
-// Pequeño delay para asegurar que el DOM está listo
-setTimeout(() => { showWelcome(); }, 50);
+      
 
     </script>
     <a href="https://tienda.casa-alonso.es/" id="backBtn"><span id="backBtnText">⬅ Volver a la tienda</span></a>
@@ -260,7 +257,7 @@ async function sendTextToChat(text){
   const thinkingBubble = $messages.lastChild;
 
   const timeout = new Promise((_, reject) =>
-    setTimeout(() => reject(new Error('timeout')), 5000)
+    setTimeout(() => reject(new Error('timeout')), 15000)
   );
 
   try {
@@ -294,6 +291,13 @@ function addAssistantMessage(text){
   container.appendChild(renderAssistant(text));
   container.scrollTop = container.scrollHeight;
 }
+</script>
+
+<script>
+  // Arranque inicial — va aquí al final para que todo esté cargado
+  document.getElementById('lang').value = 'español';
+  applyLanguage();
+  showWelcome();
 </script>
   </body>
 </html>
