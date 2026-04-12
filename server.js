@@ -226,13 +226,37 @@ function nameTokens(name) {
 
 // Léxico de sabores (para "no disponibles")
 const FLAVORS = new Set([
-  'fresa','fresas','frambuesa','frambuesas','cereza','cerezas','arandano','arandanos','arándano','arándanos',
-  'mora','moras','higo','higos','melocoton','melocotones','albaricoque','albaricoques','ciruela','ciruelas',
-  'manzana','manzanas','pera','peras','membrillo','membrillos','limon','limones','naranja','naranjas',
-  'mandarina','mandarinas','pomelo','pomelos','kiwi','kiwis','uva','uvas','mango','mangos',
-  'pina','piña','pinas','piñas','coco','cocos','granada','granadas','maracuya','maracuyas',
-  'grosella','grosellas','higo chumbo','higos chumbos','arandano rojo','arandanos rojos',
-  'frutos del bosque','frutos bosque','castana','castañas','castana','castañas'
+  // Español — del catálogo
+  'castana','castañas','frambuesa','frambuesas','grosella','grosellas',
+  'cabello de angel','arandano','arandanos','arándano','arándanos',
+  'zanahoria','zanahorias','pimiento','pimientos','higo','higos',
+  'cereza','cerezas','ciruela','ciruelas','naranja','naranjas',
+  'melocoton','melocotones','melocotón','frutos del bosque','frutos bosque',
+  'fresa','fresas','kiwi','kiwis','calabaza','calabazas','tomate','tomates',
+  'cebolla','cebollas','membrillo','membrillos','hierbas','bellota','bellotas',
+  'gloria','miel','polen','espliego','azahar','encina',
+  'cerveza','esparrago','espárrago','esparragos','espárragos',
+  // Español — otros comunes
+  'mango','mangos','pina','piña','coco','cocos','limon','limones',
+  'mora','moras','albaricoque','albaricoques','granada','granadas',
+  'mandarina','mandarinas','pomelo','pomelos','uva','uvas',
+  'maracuya','maracuyas','sandia','sandía','melon','melón',
+  'castana','castañas','pera','peras','manzana','manzanas',
+  // Inglés — del catálogo
+  'chestnut','chestnuts','raspberry','raspberries','redcurrant','redcurrants',
+  'angel hair','blueberry','blueberries','carrot','carrots',
+  'pepper','peppers','fig','figs','cherry','cherries',
+  'plum','plums','orange','oranges','peach','peaches',
+  'forest fruits','mixed berries','strawberry','strawberries',
+  'kiwi','pumpkin','pumpkins','tomato','tomatoes','onion','onions',
+  'quince','quinces','herbs','acorn','acorns','honey','pollen',
+  'lavender','blossom','oak','beer','asparagus',
+  // Inglés — otros comunes
+  'mango','mangos','pineapple','pineapples','coconut','coconuts',
+  'lemon','lemons','blackberry','blackberries','apricot','apricots',
+  'pomegranate','pomegranates','mandarin','mandarins','grapefruit','grapefruits',
+  'grape','grapes','passion fruit','watermelon','watermelons','melon','melons',
+  'pear','pears','apple','apples','cranberry','cranberries'
 ]);
 
 function flavorTokensFrom(texto) {
@@ -498,7 +522,7 @@ app.post('/api/chat', async (req, res) => {
      language === 'inglés' ? 'inglés' : 'español';
 
     // Intents y patrones
-    const reAdd = /(quiero|anadir|añade|pon|agrega|sumar)\s+(\d+)\s+(.+)/i;
+    const reAdd = /(quiero|anadir|añade|pon|agrega|sumar|añadir|add)\s+(\d+)\s+(.+)/i;
     const reVer = /^(ver carrito|carrito)$/i;
     const reVac = /^(vaciar carrito|vaciar|limpiar carrito)$/i;
     const reConf = /^(confirmar pedido|confirmar|finalizar pedido)$/i;
@@ -699,8 +723,8 @@ REGLA DE PRIVACIDAD — MUY IMPORTANTE:
   - En inglés: "Sorry, I can only assist you in Spanish or English. Please use the language selector above. Thank you!"
 
 REGLA DE CONTENIDO:
-- Solo responde preguntas sobre Sabores del Guijo: productos, envíos, historia, el pueblo El Guijo, la comarca de La Vera.
-- Si te preguntan algo que no tiene que ver con la tienda, redirige amablemente al cliente hacia los productos o el contacto.
+- Responde preguntas sobre: productos, envíos, historia de la empresa, el pueblo El Guijo de Santa Bárbara, la comarca de La Vera, turismo en la zona, fiestas locales, el Monasterio de Yuste y el Parador de Jarandilla.
+- Si te preguntan algo completamente ajeno a la empresa o la zona (política, deportes, etc.), redirige amablemente hacia los productos o el contacto.
 
 Formatea SIEMPRE así:
 - Empieza con una frase breve (máx. 2 líneas) que responda directo.
