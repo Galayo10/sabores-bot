@@ -166,8 +166,6 @@
       });
 
       // Arranque inicial
-      applyLanguage();
-      showWelcome();
       $lang.value = 'español';
 applyLanguage();
 showWelcome();
@@ -262,7 +260,7 @@ async function sendTextToChat(text){
     body: JSON.stringify({
       sessionId: localStorage.getItem('sg_session') || 'anon',
       language: $lang.value,
-      messages: [...histoty, { role:'user', content: text }]
+      messages: [...history, { role:'user', content: text }]
     })
   });
   const data = await res.json();

@@ -259,8 +259,10 @@ const FLAVORS = new Set([
   'pear','pears','apple','apples','cranberry','cranberries'
 ]);
 
-function flavorTokensFrom(texto) {
-  const ts = tokens(texto);
+
+ function flavorTokensFrom(texto) {
+  const traducido = translateToEs(texto);
+  const ts = tokens(traducido);
   return ts
     .map(singular)
     .filter(t => FLAVORS.has(t) || FLAVORS.has(`${t}s`) || FLAVORS.has(`${t}es`));
