@@ -845,8 +845,7 @@ app.get('/api/analytics', requireAuth, (req, res) => {
       const presentFlavors = flavorTs.filter(t => catalogFlavorSet.has(t));
       const missing = flavorTs.filter(t => !catalogFlavorSet.has(t));
 
-      const looksLikeProductQuery = reProductoQ.test(text) || Boolean(cand) || presentFlavors.length > 0;
-
+      const looksLikeProductQuery = (reProductoQ.test(text) || presentFlavors.length > 0) && (Boolean(cand) || presentFlavors.length > 0);
       if (looksLikeProductQuery) {
         if (cand) {
           const name = cand.Producto;
@@ -925,7 +924,7 @@ app.get('/api/export', requireAuth, (req, res) => {
     const presentFlavors = flavorTs.filter(t => catalogFlavorSet.has(t));
     const missing = flavorTs.filter(t => !catalogFlavorSet.has(t));
 
-    const looksLikeProductQuery = reProductoQ.test(text) || Boolean(cand) || presentFlavors.length > 0;
+    const looksLikeProductQuery = (reProductoQ.test(text) || presentFlavors.length > 0) && (Boolean(cand) || presentFlavors.length > 0);
 
     if (looksLikeProductQuery) {
       if (cand) {
