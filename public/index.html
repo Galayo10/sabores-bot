@@ -168,7 +168,8 @@
       // Arranque inicial
       $lang.value = 'español';
 applyLanguage();
-showWelcome();
+// Pequeño delay para asegurar que el DOM está listo
+setTimeout(() => { showWelcome(); }, 50);
 
     </script>
     <a href="https://tienda.casa-alonso.es/" id="backBtn"><span id="backBtnText">⬅ Volver a la tienda</span></a>
@@ -254,17 +255,39 @@ function sendQuick(text){
 
 // Ejemplo: si tu función original esperaba leer de un input, extrae el POST a esta
 async function sendTextToChat(text){
-  const res = await fetch('/api/chat', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      sessionId: localStorage.getItem('sg_session') || 'anon',
-      language: $lang.value,
-      messages: [...history, { role:'user', content: text }]
-    })
-  });
-  const data = await res.json();
-  addAssistantMessage(data.reply || '(sin respuesta)');
+  history.push({ role:'user', content: text });
+
+  addMessage(i18n[getLang()].thinking, 'assistant');
+  const thinkingBubble = $messages.lastChild;
+
+  const timeout = new Promise((_, reject) =>
+    setTimeout(() => reject(new Error('timeout')), 5000)
+  );
+
+  try {
+    const fetchPromise = fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sessionId: localStorage.getItem('sg_session') || 'anon',
+        language: $lang.value,
+        messages: [...history]
+      })
+    });
+
+    const res = await Promise.race([fetchPromise, timeout]);
+    const data = await res.json();
+    thinkingBubble.remove();
+    addAssistantMessage(data.reply || i18n[getLang()].error);
+    history.push({ role:'assistant', content: data.reply || '' });
+  } catch (err) {
+    thinkingBubble.remove();
+    if (err.message === 'timeout') {
+      addMessage(i18n[getLang()].error, 'assistant');
+    } else {
+      addMessage('Error de red: ' + err.message, 'assistant');
+    }
+  }
 }
 
 // Envoltorios para añadir mensajes al chat
