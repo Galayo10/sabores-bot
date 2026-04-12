@@ -257,8 +257,8 @@ async function sendTextToChat(text){
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       sessionId: localStorage.getItem('sg_session') || 'anon',
-      language: 'auto',
-      messages: [{ role:'user', content: text }]
+      language: $lang.value,
+      messages: [...histoty, { role:'user', content: text }]
     })
   });
   const data = await res.json();
