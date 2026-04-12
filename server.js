@@ -786,8 +786,12 @@ ${productosTexto}
 Manual interno:
 ${manualEmpresa}
 
-No inventes tamaños, formatos, porcentajes, ingredientes ni premios.
-Solo menciona gramos, ml o formatos si aparecen literalmente en el catálogo o en el manual interno.
+REGLA CRÍTICA — NO INVENTAR:
+- Nunca inventes tamaños, pesos, formatos, porcentajes, ingredientes, premios ni precios.
+- Si el catálogo no menciona un formato pequeño, grande, 300g, 500g o cualquier otro dato, NO lo digas.
+- Si el cliente pregunta por algo que no está en el catálogo (como "mermeladas pequeñas"), responde honestamente que no tienes esa información y sugiere que contacten por teléfono al 927 56 02 92 o por email a info@casa-alonso.com para más detalles.
+- Solo afirma lo que aparece literalmente en el catálogo o en el manual interno.
+
 Idioma: detecta el del usuario. Si no sabes algo, pide más contexto cordialmente.`
     };
 
