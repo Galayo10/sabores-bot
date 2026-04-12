@@ -369,7 +369,7 @@ function findCandidate(userText) {
     }
   }
 
-  return best || null;
+  return (bestScore >= 10) ? best : null;
 }
 
 // ------------------------- Carrito interno (solo queda para compat) -------------------------
