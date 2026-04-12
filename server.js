@@ -301,8 +301,35 @@ function pickDisplayByPriority(flavor) {
 }
 
 // Coincidencia estricta de producto (respeta categoría y da peso a sabores)
+const EN_TO_ES = {
+  'fig':'higo','figs':'higos','strawberry':'fresa','strawberries':'fresas',
+  'raspberry':'frambuesa','raspberries':'frambuesas','cherry':'cereza','cherries':'cerezas',
+  'blueberry':'arandano','blueberries':'arandanos','peach':'melocoton','peaches':'melocotones',
+  'plum':'ciruela','plums':'ciruelas','orange':'naranja','oranges':'naranjas',
+  'quince':'membrillo','quinces':'membrillos','chestnut':'castana','chestnuts':'castanas',
+  'redcurrant':'grosella','redcurrants':'grosellas','tomato':'tomate','tomatoes':'tomates',
+  'carrot':'zanahoria','carrots':'zanahorias','pumpkin':'calabaza','pumpkins':'calabazas',
+  'onion':'cebolla','onions':'cebollas','pepper':'pimiento','peppers':'pimientos',
+  'forest fruits':'frutos del bosque','mixed berries':'frutos del bosque',
+  'acorn':'bellota','acorns':'bellotas','herbs':'hierbas','honey':'miel',
+  'asparagus':'esparrago','beer':'cerveza','kiwi':'kiwi','lemon':'limon',
+  'blackberry':'mora','blackberries':'moras','apple':'manzana','apples':'manzanas',
+  'pear':'pera','pears':'peras','mango':'mango','pineapple':'pina',
+  'coconut':'coco','grape':'uva','grapes':'uvas','jam':'mermelada',
+  'vinegar':'vinagre','liqueur':'licor','liquor':'licor'
+};
+
+function translateToEs(text) {
+  let t = normaliza(text);
+  for (const [en, es] of Object.entries(EN_TO_ES)) {
+    t = t.replace(new RegExp('\\b' + en + '\\b', 'g'), es);
+  }
+  return t;
+}
+
 function findCandidate(userText) {
-  const kwsUserSing = tokens(userText).map(singular);
+  const translated = translateToEs(userText);
+  const kwsUserSing = tokens(translated).map(singular);
   if (kwsUserSing.length === 0) return null;
 
   const wantedCat = detectCategory(userText); // puede ser null
@@ -522,7 +549,7 @@ app.post('/api/chat', async (req, res) => {
      language === 'inglés' ? 'inglés' : 'español';
 
     // Intents y patrones
-    const reAdd = /(quiero|anadir|añade|pon|agrega|sumar|añadir|add)\s+(\d+)\s+(.+)/i;
+    const reAdd = WP_BASE ? /(quiero|anadir|añade|pon|agrega|sumar|añadir|add)\s+(\d+)\s+(.+)/i : null;
     const reVer = /^(ver carrito|carrito)$/i;
     const reVac = /^(vaciar carrito|vaciar|limpiar carrito)$/i;
     const reConf = /^(confirmar pedido|confirmar|finalizar pedido)$/i;
@@ -723,8 +750,9 @@ REGLA DE PRIVACIDAD — MUY IMPORTANTE:
   - En inglés: "Sorry, I can only assist you in Spanish or English. Please use the language selector above. Thank you!"
 
 REGLA DE CONTENIDO:
-- Responde preguntas sobre: productos, envíos, historia de la empresa, el pueblo El Guijo de Santa Bárbara, la comarca de La Vera, turismo en la zona, fiestas locales, el Monasterio de Yuste y el Parador de Jarandilla.
-- Si te preguntan algo completamente ajeno a la empresa o la zona (política, deportes, etc.), redirige amablemente hacia los productos o el contacto.
+- Responde con entusiasmo y detalle preguntas sobre: productos, envíos, historia de la empresa, el pueblo (El Guijo de Santa Bárbara), la zona, la comarca (La Vera), turismo, rutas, naturaleza, gargantas, fiestas locales como Los Empalaos o Los Escobazos, el Monasterio de Yuste y el Parador de Jarandilla.
+- Si alguien pregunta por "el pueblo", "la zona", "el lugar", "where are you from", "where is the shop", "tell me about the area" o similares, responde hablando de El Guijo de Santa Bárbara y La Vera con detalle usando la información del manual interno.
+- Solo redirige al cliente si pregunta algo completamente ajeno como política, deportes u otros temas sin relación.
 
 Formatea SIEMPRE así:
 - Empieza con una frase breve (máx. 2 líneas) que responda directo.
