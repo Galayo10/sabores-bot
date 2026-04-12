@@ -879,7 +879,9 @@ app.get('/api/analytics', requireAuth, (req, res) => {
       .filter(r => r.day)
       .sort((a, b) => b.day.localeCompare(a.day));
 
-    res.json({ topProducts, missingInterests, volumePerDay, totalQuestions: data.length, from: from||null, to: to||null });
+      const uniqueUsers = new Set(data.map(m => m.sessionId).filter(Boolean)).size;
+
+    res.json({ topProducts, missingInterests, volumePerDay, uniqueUsers, totalQuestions: data.length, from: from||null, to: to||null });
   } catch (e) {
     console.error('ANALYTICS_ERROR:', e);
     res.status(500).json({ error: 'ANALYTICS_ERROR', message: e.message });

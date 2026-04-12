@@ -61,6 +61,16 @@
       <button data-preset="all" class="pill" style="cursor:pointer; background:#fff">Todo</button>
       <button id="exportCsv" class="pill" style="cursor:pointer; background:#9bd4ff">Exportar CSV</button>
     </div>
+    <div style="display:flex; gap:16px; margin-bottom:16px; flex-wrap:wrap;">
+  <div class="card" style="flex:1; min-width:150px;">
+    <h2>Total preguntas</h2>
+    <div class="content" style="font-size:32px; font-weight:bold;" id="statTotal">—</div>
+  </div>
+  <div class="card" style="flex:1; min-width:150px;">
+    <h2>Usuarios únicos</h2>
+    <div class="content" style="font-size:32px; font-weight:bold;" id="statUsers">—</div>
+  </div>
+</div>
     <div class="grid">
       <div class="card">
         <h2>Productos más populares (por nº de preguntas)</h2>
@@ -137,6 +147,8 @@
       }
 
       const a = await aRes.json();
+      document.getElementById('statTotal').textContent = a.totalQuestions ?? '—';
+document.getElementById('statUsers').textContent = a.uniqueUsers ?? '—';
       const q = await qRes.json();
 
       outTop.innerHTML = (a.topProducts && a.topProducts.length)
