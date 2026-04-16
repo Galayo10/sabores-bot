@@ -242,11 +242,12 @@ recHtml += `<div class="product-card"><strong>${recLabel}</strong> ${content}</d
 
 // Envía un mensaje de usuario desde una sugerencia
 function sendQuick(text){
-  // Pinta burbuja de usuario (opcional)
+  // Añadir contexto del último mensaje del bot para mantener la conversación
+  const lastBotMsg = [...$messages.querySelectorAll('.chat-msg.assistant')].at(-1);
+  const contexto = lastBotMsg ? lastBotMsg.innerText.slice(0, 200) : '';
+  const textConContexto = contexto ? `[Contexto de la conversación: ${contexto}]\n${text}` : text;
   addMessage(text, 'user');
-  // Llama a tu función que hace fetch a /api/chat
-  // Si tu función original se llama sendMessage() leyendo de un input, crea otra:
-  sendTextToChat(text);
+  sendTextToChat(textConContexto);
 }
 
 // Ejemplo: si tu función original esperaba leer de un input, extrae el POST a esta
