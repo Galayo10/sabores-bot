@@ -364,11 +364,16 @@ function findCandidate(userText) {
       if (pa !== -1 && pb !== -1 && pa < pb) {
         best = it.p;
       } else if (pa === pb && it.name.length > normaliza(best.Producto).length) {
-        best = it.p;
+  // Preferir versión normal sobre "sin azúcar" si no se especifica
+  const userWantsSinAzucar = normaliza(userText).includes('sin azucar') || normaliza(userText).includes('sin azúcar');
+  if (!userWantsSinAzucar && normaliza(it.p.Producto).includes('sin azucar')) {
+    // no cambiamos best
+  } else {
+    best = it.p;
       }
     }
   }
-
+}
   return (bestScore >= 10) ? best : null;
 }
 
@@ -803,6 +808,7 @@ REGLA DE PRODUCTOS SIMILARES:
 - Usa viñetas "•" para listar cada opción con su nombre exacto del catálogo.
 - No elijas una sola opción cuando hay varias — deja que el cliente decida.
 - Ejemplo: si preguntan por "mermelada de naranja" y tienes "Mermelada Extra de Naranja Dulce", "Mermelada Extra de Naranja Amarga" y "Mermelada Extra de Naranja Amarga sin Azúcar", menciona las tres.
+- Cuando el cliente pida una versión "sin azúcar" de un producto, busca SIEMPRE en el catálogo si existe esa versión antes de decir que no hay. En el catálogo hay versiones sin azúcar de: Fresa, Cereza, Frambuesa, Melocotón, Kiwi, Tomate, Naranja Amarga y Ciruela Claudia.
 
 Idioma: detecta el del usuario. Si no sabes algo, pide más contexto cordialmente.`
     };
