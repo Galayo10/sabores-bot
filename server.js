@@ -278,6 +278,7 @@ const productKeywords = productos.map(p => {
 });
 
 const catalogFlavorSet = new Set(productKeywords.flatMap(x => x.kwsSing));
+const catalogProductNames = new Set(productos.map(p => normaliza(p.Producto)));
 
 const DISPLAY_BY_FLAVOR = new Map();         // 'higo' -> 'Mermelada de Higo'
 const DISPLAY_BY_FLAVOR_AND_CAT = new Map(); // 'mermelada|higo' -> 'Mermelada de Higo'
@@ -868,7 +869,7 @@ app.get('/api/analytics', requireAuth, (req, res) => {
       const presentFlavors = flavorTs.filter(t => catalogFlavorSet.has(t));
       const missing = flavorTs.filter(t => !catalogFlavorSet.has(t));
 
-      const looksLikeProductQuery = (reProductoQ.test(text) || presentFlavors.length > 0) && (Boolean(cand) || presentFlavors.length > 0);
+      const looksLikeProductQuery = Boolean(cand) || presentFlavors.length > 0;
       if (looksLikeProductQuery) {
         if (cand) {
           const name = cand.Producto;
@@ -947,7 +948,7 @@ app.get('/api/export', requireAuth, (req, res) => {
     const presentFlavors = flavorTs.filter(t => catalogFlavorSet.has(t));
     const missing = flavorTs.filter(t => !catalogFlavorSet.has(t));
 
-    const looksLikeProductQuery = (reProductoQ.test(text) || presentFlavors.length > 0) && (Boolean(cand) || presentFlavors.length > 0);
+    const looksLikeProductQuery = Boolean(cand) || presentFlavors.length > 0;
 
     if (looksLikeProductQuery) {
       if (cand) {
