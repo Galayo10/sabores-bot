@@ -261,9 +261,10 @@ const FLAVORS = new Set([
 
 // Detecta productos no disponibles que no son sabores de fruta
 const PRODUCTOS_COMUNES = new Set([
-  'embutido','embutidos','jamon','jamón','chorizo','salchichon','salchichón',
-  'aceite','oliva','pimenton','pimentón','queso','quesos','vino','vinos',
-  'pan','miel de abeja','dulce','dulces','conserva','conservas',
+   'embutido','embutidos','jamon','jamon','chorizo','salchichon','salchichon',
+  'chorizos','jamones','embutido','fiambre','fiambres','longaniza','longanizas',
+  'aceite','oliva','pimenton','pimenton','queso','quesos','vino','vinos',
+  'pan','dulce','dulces','conserva','conservas',
   'ham','sausage','oil','cheese','wine','bread','paprika'
 ]);
 
@@ -273,7 +274,12 @@ function productosNoDisponiblesFrom(texto) {
     .replace(/[^\p{Letter}\p{Number}\s]+/gu, ' ')
     .split(/\s+/)
     .filter(Boolean);
-  return ts.filter(t => PRODUCTOS_COMUNES.has(t) && !catalogFlavorSet.has(t));
+  const normalizados = ts.map(t => normaliza(t));
+  return normalizados.filter(t => 
+    PRODUCTOS_COMUNES.has(t) || 
+    PRODUCTOS_COMUNES.has(t + 's') || 
+    PRODUCTOS_COMUNES.has(t.replace(/s$/, ''))
+  ).filter(t => !catalogFlavorSet.has(t));
 }
 
  function flavorTokensFrom(texto) {
