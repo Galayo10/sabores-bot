@@ -391,10 +391,27 @@ function findCandidate(userText) {
     }
   }
 }
-  const esProductoFruta = best && nameTokens(best.Producto).some(k => FLAVORS.has(k));
-  if (bestScore >= 10) return best;
-  if (!esProductoFruta && bestScore >= 3) return best;
-  return null;
+  return (bestScore >= 10) ? best : null;
+}
+
+// Busca productos NO frutales por nombre directo (aceite, pimentón, cerveza...)
+function findCandidateByName(userText) {
+  const userTokens = tokens(normaliza(userText)).map(singular);
+  if (userTokens.length === 0) return null;
+  let best = null;
+  let bestMatches = 0;
+  for (const it of productKeywords) {
+    const isFruta = it.kwsSing.some(k => FLAVORS.has(k));
+    if (isFruta) continue; // los frutales los maneja findCandidate
+    const nameWords = nameTokens(it.name).map(singular).filter(w => w.length > 3);
+    if (nameWords.length === 0) continue;
+    const matches = nameWords.filter(w => userTokens.includes(w)).length;
+    if (matches > bestMatches) {
+      bestMatches = matches;
+      best = it.p;
+    }
+  }
+  return bestMatches >= 1 ? best : null;
 }
 
 // ------------------------- Carrito interno (solo queda para compat) -------------------------
@@ -868,7 +885,7 @@ app.get('/api/analytics', requireAuth, (req, res) => {
       const day = (m.ts || '').slice(0, 10);
       if (day) byDay[day] = (byDay[day] || 0) + 1;
 
-      const cand = findCandidate(text);
+      const cand = findCandidate(text) || findCandidateByName(text);
       const flavorTs = flavorTokensFrom(text);
       const presentFlavors = flavorTs.filter(t => catalogFlavorSet.has(t));
       const missing = flavorTs.filter(t => !catalogFlavorSet.has(t));
@@ -950,7 +967,7 @@ app.get('/api/export', requireAuth, (req, res) => {
     const day = (m.ts || '').slice(0, 10);
     if (day) byDay[day] = (byDay[day] || 0) + 1;
 
-    const cand = findCandidate(text);
+    const cand = findCandidate(text) || findCandidateByName(text);
     const flavorTs = flavorTokensFrom(text);
     const presentFlavors = flavorTs.filter(t => catalogFlavorSet.has(t));
     const missing = flavorTs.filter(t => !catalogFlavorSet.has(t));
