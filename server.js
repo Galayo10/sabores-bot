@@ -189,7 +189,7 @@ function singular(t) {
 
 // ---- Categorías y helpers ----
 const CATEGORIES = ['mermelada','vinagre','licor','membrillo'];
-const CATEGORY_PRIORITY = ['mermelada','vinagre','licor','membrillo'];
+const CATEGORY_PRIORITY = ['mermelada','vinagre','licor','membrillo','otro'];
 
 function detectCategory(text) {
   const t = normaliza(text);
@@ -206,7 +206,7 @@ function getProductCategory(p) {
   if (name.includes('vinagre')   || tipo.includes('vinagre'))   return 'vinagre';
   if (name.includes('licor')     || tipo.includes('licor'))     return 'licor';
   if (name.includes('membrillo') || tipo.includes('membrillo')) return 'membrillo';
-  return 'mermelada'; // fallback sensato
+  return 'otro'; // fallback sensato
 }
 
 // Palabras “ruido” que no deben pesar al indexar nombres de producto
