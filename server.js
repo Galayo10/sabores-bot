@@ -268,7 +268,11 @@ const PRODUCTOS_COMUNES = new Set([
 ]);
 
 function productosNoDisponiblesFrom(texto) {
-  const ts = tokens(normaliza(texto));
+  // Usamos split directo en lugar de tokens() para evitar que el filtro de stopwords elimine palabras
+  const ts = normaliza(texto)
+    .replace(/[^\p{Letter}\p{Number}\s]+/gu, ' ')
+    .split(/\s+/)
+    .filter(Boolean);
   return ts.filter(t => PRODUCTOS_COMUNES.has(t) && !catalogFlavorSet.has(t));
 }
 
@@ -387,7 +391,10 @@ function findCandidate(userText) {
     }
   }
 }
-  return (bestScore >= 10 || (bestScore >= 1 && best && !FLAVORS.has(nameTokens(best.Producto)[0]))) ? best : null;
+  const esProductoFruta = best && nameTokens(best.Producto).some(k => FLAVORS.has(k));
+  if (bestScore >= 10) return best;
+  if (!esProductoFruta && bestScore >= 3) return best;
+  return null;
 }
 
 // ------------------------- Carrito interno (solo queda para compat) -------------------------
@@ -801,7 +808,7 @@ Sugerencias: Añadir 1 Mermelada de Frambuesa sin Pepitas | Ver carrito | Ver en
 PRODUCTOS:
 - NUNCA menciones un producto que no esté literalmente en el catálogo. Si existe "sin pepitas" no asumas que hay "con pepitas".
 - Nunca inventes porcentajes, tamaños, formatos, ingredientes ni premios.
-- Si el cliente pregunta por un sabor concreto (ej: "frambuesa"), muestra TODAS las versiones del catálogo: mermelada normal, sin azúcar, vinagre, licor... No omitas ninguna.
+- Si el cliente pregunta por un sabor concreto (ej: "frambuesa"), muestra TODAS las versiones del catálogo: mermelada normal, mermelada sin azúcar, vinagre, licor... No omitas ninguna.
 - Si el cliente pregunta por un tipo general (ej: "mermeladas"), muestra 4-5 opciones y ofrece ver más.
 - Si preguntan por algo que no está en el catálogo, diles honestamente que no lo tienes y sugiere llamar al 927 56 02 92 o escribir a info@casa-alonso.com.
 
@@ -866,9 +873,7 @@ app.get('/api/analytics', requireAuth, (req, res) => {
       const presentFlavors = flavorTs.filter(t => catalogFlavorSet.has(t));
       const missing = flavorTs.filter(t => !catalogFlavorSet.has(t));
 
-      if (cand) {
-  counts[cand.Producto] = (counts[cand.Producto] || 0) + 1;
-}
+      
       const looksLikeProductQuery = Boolean(cand) || presentFlavors.length > 0 || missing.length > 0;
       if (looksLikeProductQuery) {
         if (cand) {
@@ -950,9 +955,7 @@ app.get('/api/export', requireAuth, (req, res) => {
     const presentFlavors = flavorTs.filter(t => catalogFlavorSet.has(t));
     const missing = flavorTs.filter(t => !catalogFlavorSet.has(t));
 
-    if (cand) {
-  counts[cand.Producto] = (counts[cand.Producto] || 0) + 1;
-}
+    
     const looksLikeProductQuery = Boolean(cand) || presentFlavors.length > 0 || missing.length > 0;
 
     if (looksLikeProductQuery) {
