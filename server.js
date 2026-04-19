@@ -259,6 +259,18 @@ const FLAVORS = new Set([
   'pear','pears','apple','apples','cranberry','cranberries'
 ]);
 
+// Detecta productos no disponibles que no son sabores de fruta
+const PRODUCTOS_COMUNES = new Set([
+  'embutido','embutidos','jamon','jamón','chorizo','salchichon','salchichón',
+  'aceite','oliva','pimenton','pimentón','queso','quesos','vino','vinos',
+  'pan','miel de abeja','dulce','dulces','conserva','conservas',
+  'ham','sausage','oil','cheese','wine','bread','paprika'
+]);
+
+function productosNoDisponiblesFrom(texto) {
+  const ts = tokens(normaliza(texto));
+  return ts.filter(t => PRODUCTOS_COMUNES.has(t) && !catalogFlavorSet.has(t));
+}
 
  function flavorTokensFrom(texto) {
   const traducido = translateToEs(texto);
@@ -774,7 +786,9 @@ Formatea SIEMPRE así:
 - Escribe 3-5 viñetas "•" con información útil y variada: precio, sabor, uso, origen, curiosidad. Que cada viñeta aporte algo diferente.
 - Las viñetas deben ser completas y naturales, pero a su vez tienen que ser directas y máximo dos líneas, como si se las contara un dependiente amable, no una ficha técnica.
 - No expliques demasiado por viñeta - una idea por viñeta.
-- Si procede, añade "Recomendación:" con el nombre exacto del producto del catálogo.
+- SIEMPRE incluye el porcentaje de fruta y azúcar en una misma viñeta, uno detrás del otro. Ejemplo: "Elaborada con un 65% de fruta y un 35% de azúcar."
+- Si el catálogo no menciona los porcentajes, no los inventes.
+- Si procede, añade "Recomendación:" con el nombre exacto del producto del catálogo seguido del precio entre paréntesis. Ejemplo: "Recomendación: Mermelada Extra de Frambuesa sin Pepitas (4.25€)"
 - Termina con "Sugerencias:" y 2-4 acciones cortas separadas por " | ".
 - NUNCA empieces una viñeta con "Precio:", "Ingredientes:", "Características:" ni ninguna etiqueta. Integra esa información de forma natural en la frase.
 - Cuando listes varios productos, muestra máximo 4-5 con su nombre y precio. Si hay más, termina con "¿Quieres ver más opciones?" como sugerencia.
@@ -815,6 +829,7 @@ REGLA DE PRODUCTOS SIMILARES:
 - No elijas una sola opción cuando hay varias — deja que el cliente decida. Cuando el cliente pregunte por un sabor concreto, muestra SIEMPRE todas las versiones disponibles de ese sabor. Primero la versión normal y luego la versión sin azúcar si existe. Nunca omitas la versión sin azucar.
 - Ejemplo: si preguntan por "mermelada de naranja" y tienes "Mermelada Extra de Naranja Dulce", "Mermelada Extra de Naranja Amarga" y "Mermelada Extra de Naranja Amarga sin Azúcar", menciona las tres. Sobre todo si existe con azúcar y sin azúcar.
 - Cuando el cliente pida una versión "sin azúcar" de un producto, busca SIEMPRE en el catálogo si existe esa versión antes de decir que no hay. En el catálogo hay versiones sin azúcar de: Fresa, Cereza, Frambuesa, Melocotón, Kiwi, Tomate, Naranja Amarga y Ciruela Claudia.
+- Cuando el cliente pregunte por un sabor, muestra TODOS los productos de ese sabor: mermeladas, vinagres, licores y cualquier otro formato disponible en el catálogo. No te limites a un solo tipo de producto.
 
 Idioma: detecta el del usuario. Si no sabes algo, pide más contexto cordialmente.`
     };
@@ -869,6 +884,9 @@ app.get('/api/analytics', requireAuth, (req, res) => {
       const presentFlavors = flavorTs.filter(t => catalogFlavorSet.has(t));
       const missing = flavorTs.filter(t => !catalogFlavorSet.has(t));
 
+      if (cand) {
+  counts[cand.Producto] = (counts[cand.Producto] || 0) + 1;
+}
       const looksLikeProductQuery = Boolean(cand) || presentFlavors.length > 0 || missing.length > 0;
       if (looksLikeProductQuery) {
         if (cand) {
@@ -948,6 +966,9 @@ app.get('/api/export', requireAuth, (req, res) => {
     const presentFlavors = flavorTs.filter(t => catalogFlavorSet.has(t));
     const missing = flavorTs.filter(t => !catalogFlavorSet.has(t));
 
+    if (cand) {
+  counts[cand.Producto] = (counts[cand.Producto] || 0) + 1;
+}
     const looksLikeProductQuery = Boolean(cand) || presentFlavors.length > 0 || missing.length > 0;
 
     if (looksLikeProductQuery) {
