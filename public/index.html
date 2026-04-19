@@ -30,7 +30,30 @@
 .suggestions button { border:2px solid #6e6e6e; background:#fff; border-radius:999px; padding:6px 10px; cursor:pointer; font-size:12px; }
 .suggestions button:hover { background:#2a7c3f; color:#fff; border-color:#2a7c3f; }
 .product-card { border:1px solid #6e6e6e; border-radius:12px; padding:8px 10px; margin-top:8px; background:#fafafa; }
-#send { display: flex; align-items: center; gap: 6px;}
+#send {
+  width: 54px;
+  height: 42px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #849a6b;
+  color: #fff;
+  border: 1px solid #7b9163;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+#send svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+  display: block;
+}
+
+#send:hover {
+  filter: brightness(0.96);
+}
     </style>
   </head>
   <body>
@@ -57,9 +80,9 @@
 
       <div class="composer">
         <input id="input" placeholder="Escribe tu mensaje..." style="flex:1" />
-       <button id="send">
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-    <path d="M15.854 7.146a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.708-.708L14.293 8 5.146-1.146a.5.5 0 1 1 .708-.708l10 10z"/>
+       <button id="send" aria-label="Enviar mensaje" title="Enviar">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M3 20L21 12L3 4L3 10L15 12L3 14L3 20Z"></path>
   </svg>
 </button>
       </div>
@@ -151,10 +174,6 @@
       function applyLanguage() {
   const t = i18n[getLang()];
   $input.placeholder = t.placeholder;
-  $send.innerHTML = `<span>${t.sendBtn}</span>
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-  <path d="M15.854 7.146a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.708-.708L14.293 8 5.146-1.146a.5.5 0 1 1 .708-.708l10 10z"/>
-</svg>`;
   document.getElementById('titleText').textContent = t.title;
   document.getElementById('createdBy').textContent = t.createdBy;
   document.getElementById('langLabel').childNodes[0].textContent = t.langLabel;
