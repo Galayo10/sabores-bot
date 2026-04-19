@@ -387,7 +387,7 @@ function findCandidate(userText) {
     }
   }
 }
-  return (bestScore >= 10) ? best : null;
+  return (bestScore >= 10 || (bestScore >= 1 && best && !FLAVORS.has(nameTokens(best.Producto)[0]))) ? best : null;
 }
 
 // ------------------------- Carrito interno (solo queda para compat) -------------------------
@@ -888,6 +888,8 @@ app.get('/api/analytics', requireAuth, (req, res) => {
           }
         }
         for (const t of missing) miss[t] = (miss[t] || 0) + 1;
+        const otrosFaltantes = productosNoDisponiblesFrom(text);
+        for (const t of otrosFaltantes) miss[t] = (miss[t] || 0) + 1;
       }
     }
 
@@ -971,6 +973,8 @@ app.get('/api/export', requireAuth, (req, res) => {
         }
       }
       for (const t of missing) miss[t] = (miss[t] || 0) + 1;
+        const otrosFaltantes = productosNoDisponiblesFrom(text);
+        for (const t of otrosFaltantes) miss[t] = (miss[t] || 0) + 1;
     }
   }
 
