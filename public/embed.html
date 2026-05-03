@@ -157,7 +157,7 @@
     backBtn: '⬅ Volver a la tienda',
   },
   'inglés': {
-    welcome: 'Hello! I\'m the assistant of Sabores del Guijo Casa Alonso. How can I help you?',
+    welcome: 'Hello! I\'m the assistant of Sabores del Guijo Casa Alonso. How may I help you?',
     placeholder: 'Type your message...',
     sendBtn: 'Send',
     thinking: 'Thinking…',
@@ -266,18 +266,26 @@ function renderTest(text) {
       const idx = btn.getAttribute('data-pregunta');
       const op = btn.getAttribute('data-opcion');
 
-      // Deseleccionar otros botones de la misma pregunta
+      const yaSeleccionado = btn.classList.contains('selected');
+
+      // Deseleccionar todos de la misma pregunta
       div.querySelectorAll(`.test-btn[data-pregunta="${idx}"]`).forEach(b => {
         b.style.background = '#fff';
         b.style.color = '#000';
         b.style.borderColor = '#6e6e6e';
+        b.classList.remove('selected');
       });
 
-      // Seleccionar este
-      btn.style.background = '#2a7c3f';
-      btn.style.color = '#fff';
-      btn.style.borderColor = '#2a7c3f';
-       btn.classList.add('selected');
+      // Si no estaba seleccionado, seleccionarlo. Si ya lo estaba, deseleccionar
+      if (!yaSeleccionado) {
+        btn.style.background = '#2a7c3f';
+        btn.style.color = '#fff';
+        btn.style.borderColor = '#2a7c3f';
+        btn.classList.add('selected');
+        testRespuestas[idx] = op;
+      } else {
+        delete testRespuestas[idx];
+      }
 
       testRespuestas[idx] = op;
 
