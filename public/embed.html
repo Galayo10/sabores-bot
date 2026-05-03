@@ -183,7 +183,8 @@
   document.getElementById('createdBy').textContent = t.createdBy;
   document.getElementById('langLabel').childNodes[0].textContent = t.langLabel;
   document.getElementById('backBtnText').textContent = t.backBtn;
-  document.getElementById('triangleBtnText').textContent = t.triangleBtn;
+  const triangleEl = document.getElementById('triangleBtnText');
+if (triangleEl) triangleEl.textContent = t.triangleBtn;
 }
 
       // Mensaje de bienvenida
