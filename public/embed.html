@@ -203,6 +203,7 @@ function escapeHtml(s){ return s.replace(/[&<>"]/g, c=>({ '&':'&amp;','<':'&lt;'
 
 // Detecta si el mensaje es el test de mermelada perfecta
 function esMermeladaTest(text) {
+  console.log('TEXTO DEL BOT:', text);
   return text.includes('mermelada perfecta') && text.includes('•') && text.includes('|');
 }
 
