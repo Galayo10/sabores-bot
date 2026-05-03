@@ -66,7 +66,7 @@
   </div>
   <div>
     <strong id="titleText">Asistente de Sabores del Guijo Casa Alonso</strong><br>
-    <small id="createdBy">Creado por: Triangle AI</small>
+    <small id="createdBy">Descubre tu mermelada perfecta 🍓</small>
   </div>
   <div style="margin-left:auto">
     <label id="langLabel">Idioma:
@@ -152,7 +152,7 @@
     thinking: 'Pensando…',
     error: 'Lo siento, hemos tenido un error. Intente más tarde, o pruebe llamando al 927 56 02 92.',
     title: 'Asistente de Sabores del Guijo Casa Alonso',
-    createdBy: 'Creado por: Triangle AI',
+    createdBy: 'Descubre tu mermelada perfecta 🍓',
     langLabel: 'Idioma:',
     backBtn: '⬅ Volver a la tienda',
   },
@@ -163,7 +163,7 @@
     thinking: 'Thinking…',
     error: 'Sorry, we had an error. Please try again later or call us at +34 927 56 02 92.',
     title: 'Assistant of Sabores del Guijo Casa Alonso',
-    createdBy: 'Created by: Triangle AI',
+    createdBy: 'Discover your perfect jam 🍓',
     langLabel: 'Language:',
     backBtn: '⬅ Back to the shop',
   }
@@ -180,6 +180,7 @@
   document.getElementById('createdBy').textContent = t.createdBy;
   document.getElementById('langLabel').childNodes[0].textContent = t.langLabel;
   document.getElementById('backBtnText').textContent = t.backBtn;
+  document.getElementById('triangleBtnText').textContent = t.triangleBtn;
 }
 
       // Mensaje de bienvenida
@@ -198,6 +199,8 @@
       
     </script>
     <a href="https://tienda.casa-alonso.es/" id="backBtn"><span id="backBtnText">⬅ Volver a la tienda</span></a>
+    <a href="#" id="triangleBtn" style="position:fixed; bottom:20px; right:20px; background:#fff; border:2px solid #000; border-radius:12px; padding:8px 14px; font-size:14px; color:#000; text-decoration:none; box-shadow:0 2px 6px rgba(0,0,0,0.2); transition:background 0.2s ease; z-index:9999;">
+  <span id="triangleBtnText">Creado por Triangle AI</span>
     <script>
 function escapeHtml(s){ return s.replace(/[&<>"]/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c])); }
 
@@ -256,7 +259,7 @@ function renderTest(text) {
     style="margin-top:10px; background:#849a6b; color:#fff; border:none; border-radius:10px; padding:10px 20px; cursor:not-allowed; opacity:0.5; font-size:14px; width:100%">
     ${btnText}
   </button>`;
-  
+
   div.innerHTML = html;
 
   // Lógica de selección
