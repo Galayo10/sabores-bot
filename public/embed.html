@@ -201,6 +201,103 @@
     <script>
 function escapeHtml(s){ return s.replace(/[&<>"]/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c])); }
 
+// Detecta si el mensaje es el test de mermelada perfecta
+function esMermeladaTest(text) {
+  return text.includes('mermelada perfecta') && text.includes('¿Cómo te gusta el sabor?');
+}
+
+// Estado del test
+let testRespuestas = {};
+let testPreguntas = [];
+
+function renderTest(text) {
+  const div = document.createElement('div');
+  div.className = 'chat-msg assistant';
+
+  // Extraer preguntas y opciones del texto
+  const lineas = text.split('\n').map(l => l.trim()).filter(Boolean);
+  let intro = '';
+  const preguntas = [];
+
+  for (const l of lineas) {
+    if (l.startsWith('•')) {
+      const partes = l.slice(1).trim().split('?');
+      if (partes.length >= 2) {
+        const pregunta = partes[0].trim() + '?';
+        const opciones = partes[1].split('|').map(o => o.trim()).filter(Boolean);
+        preguntas.push({ pregunta, opciones });
+      }
+    } else if (!intro) {
+      intro = l;
+    }
+  }
+
+  testPreguntas = preguntas;
+  testRespuestas = {};
+
+  let html = `<div style="margin-bottom:12px">${escapeHtml(intro)}</div>`;
+
+  preguntas.forEach((p, i) => {
+    html += `<div style="margin-bottom:12px">`;
+    html += `<div style="font-size:13px; font-weight:600; margin-bottom:6px; color:#333">${escapeHtml(p.pregunta)}</div>`;
+    html += `<div style="display:flex; gap:6px; flex-wrap:wrap">`;
+    p.opciones.forEach(op => {
+      html += `<button type="button" class="test-btn" data-pregunta="${i}" data-opcion="${escapeHtml(op)}" 
+        style="border:1.5px solid #6e6e6e; background:#fff; border-radius:999px; padding:6px 12px; cursor:pointer; font-size:12px;">
+        ${escapeHtml(op)}
+      </button>`;
+    });
+    html += `</div></div>`;
+  });
+
+  html += `<button type="button" id="btnEnviarTest" disabled
+    style="margin-top:10px; background:#849a6b; color:#fff; border:none; border-radius:10px; padding:10px 20px; cursor:not-allowed; opacity:0.5; font-size:14px; width:100%">
+    Encontrar mi mermelada perfecta 🍓
+  </button>`;
+
+  div.innerHTML = html;
+
+  // Lógica de selección
+  div.querySelectorAll('.test-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = btn.getAttribute('data-pregunta');
+      const op = btn.getAttribute('data-opcion');
+
+      // Deseleccionar otros botones de la misma pregunta
+      div.querySelectorAll(`.test-btn[data-pregunta="${idx}"]`).forEach(b => {
+        b.style.background = '#fff';
+        b.style.color = '#000';
+        b.style.borderColor = '#6e6e6e';
+      });
+
+      // Seleccionar este
+      btn.style.background = '#849a6b';
+      btn.style.color = '#fff';
+      btn.style.borderColor = '#849a6b';
+
+      testRespuestas[idx] = op;
+
+      // Activar botón si están todas respondidas
+      const btnEnviar = div.querySelector('#btnEnviarTest');
+      if (Object.keys(testRespuestas).length === preguntas.length) {
+        btnEnviar.disabled = false;
+        btnEnviar.style.cursor = 'pointer';
+        btnEnviar.style.opacity = '1';
+      }
+    });
+  });
+
+  // Enviar cuando pulse el botón final
+  div.querySelector('#btnEnviarTest').addEventListener('click', () => {
+    const resumen = preguntas.map((p, i) => `${p.pregunta} ${testRespuestas[i]}`).join('. ');
+    const mensaje = `Mis respuestas: ${resumen}`;
+    addMessage(mensaje, 'user');
+    sendTextToChat(mensaje);
+  });
+
+  return div;
+}
+
 // Convierte texto con bullets y secciones a HTML simple
 function renderAssistant(text){
   const div = document.createElement('div');
@@ -316,8 +413,9 @@ async function sendTextToChat(text){
 }
 // Envoltorios para añadir mensajes al chat
 function addAssistantMessage(text){
-  const container = document.getElementById('messages'); // tu contenedor de mensajes
-  container.appendChild(renderAssistant(text));
+  const container = document.getElementById('messages');
+  const el = esMermeladaTest(text) ? renderTest(text) : renderAssistant(text);
+  container.appendChild(el);
   container.scrollTop = container.scrollHeight;
 }
 </script>
