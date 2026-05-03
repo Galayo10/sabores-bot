@@ -203,7 +203,7 @@ function escapeHtml(s){ return s.replace(/[&<>"]/g, c=>({ '&':'&amp;','<':'&lt;'
 
 // Detecta si el mensaje es el test de mermelada perfecta
 function esMermeladaTest(text) {
-  return text.includes('mermelada perfecta') && text.includes('¿Cómo te gusta el sabor?');
+  return text.includes('mermelada perfecta') && text.includes('•') && text.includes('|');
 }
 
 // Estado del test
