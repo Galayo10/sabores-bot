@@ -201,8 +201,7 @@ function escapeHtml(s){ return s.replace(/[&<>"]/g, c=>({ '&':'&amp;','<':'&lt;'
 
 // Detecta si el mensaje es el test de mermelada perfecta
 function esMermeladaTest(text) {
-  console.log('TEXTO DEL BOT:', text);
-  return text.includes('mermelada perfecta') && text.includes('•') && text.includes('|');
+  return text.includes('mermelada perfecta') && text.includes('|');
 }
 
 // Estado del test
@@ -219,7 +218,7 @@ function renderTest(text) {
   const preguntas = [];
 
   for (const l of lineas) {
-    if (l.startsWith('•')) {
+    if (l.startsWith('•') || l.startsWith('-')) {
       const partes = l.slice(1).trim().split('?');
       if (partes.length >= 2) {
         const pregunta = partes[0].trim() + '?';
