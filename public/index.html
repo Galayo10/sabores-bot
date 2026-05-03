@@ -17,6 +17,7 @@
       input, select, button { padding: 10px 12px; border-radius: 10px; border: 1px solid #ddd; }
       button { cursor: pointer; background: #849a6b; color:#000; }
       .test-btn { background: #fff !important; color: #000 !important; }
+      .test-btn.selected { background: #2a7c3f !important; color: #fff !important; border-color: #2a7c3f !important; }
       img { height: 80px; }
       #backBtn { position: fixed; bottom: 20px; left: 20px; background: #fff; border: 2px solid #000; border-radius: 12px; padding: 8px 14px; font-size: 14px; color: #000; text-decoration: none; box-shadow: 0 2px 6px rgba(0,0,0,0.2); transition: background 0.2s ease; z-index: 9999; } 
 
@@ -274,6 +275,7 @@ function renderTest(text) {
       btn.style.background = '#2a7c3f';
       btn.style.color = '#fff';
       btn.style.borderColor = '#2a7c3f';
+       btn.classList.add('selected');
 
       testRespuestas[idx] = op;
 
