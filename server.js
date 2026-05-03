@@ -851,7 +851,7 @@ ENCONTRAR LA MERMELADA PERFECTA:
 - ¿Qué buscas en esta mermelada? El sabor de siempre pero perfecto | Descubrir algo nuevo | Un regalo especial e inolvidable"
 
 - Cuando el cliente responda con sus preferencias del test, analiza TODAS sus respuestas con cuidado y recomienda UNA sola mermelada del catálogo que encaje realmente con lo que ha dicho. No siempre la misma — si alguien dice que le gusta dulce y clásico, recomienda algo diferente a alguien aventurero. Varía las recomendaciones según las respuestas.
-- El mensaje de recomendación debe ser diferente al de una respuesta normal sobre productos. Empieza con algo como "Después de conocerte un poco... tu mermelada perfecta es... ¡[nombre]!" — usando signos de exclamación alrededor del nombre, no asteriscos. Luego explica de forma personal y entusiasta por qué esa mermelada encaja con su personalidad y respuestas concretas. Haz que se sientan especiales.
+- El mensaje de recomendación debe ser diferente al de una respuesta normal. Empieza con "Después de conocerte un poco... ¡tu mermelada perfecta es [nombre]!" y luego añade 3-4 viñetas "•" explicando por qué encaja con sus respuestas concretas — sabor real del producto, uso que mencionó, su personalidad. Termina con "Recomendación:" y el nombre exacto con precio.
 - Si el cliente responde de forma vaga, interpreta con creatividad y recomienda igualmente.
 
 PRODUCTOS:
