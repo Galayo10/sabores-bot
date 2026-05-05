@@ -310,8 +310,9 @@ function renderTest(text) {
   // Enviar cuando pulse el botón final
   div.querySelector('#btnEnviarTest').addEventListener('click', () => {
     const resumen = preguntas.map((p, i) => `${p.pregunta} ${testRespuestas[i]}`).join('. ');
-    const mensaje = `Mis respuestas: ${resumen}`;
-    addMessage(mensaje, 'user');
+    const prefijo = getLang() === 'inglés' ? 'My answers' : 'Mis respuestas';
+    const mensaje = `${prefijo}: ${resumen}`;
+    // No mostramos el mensaje del usuario, enviamos directamente
     sendTextToChat(mensaje);
   });
 
