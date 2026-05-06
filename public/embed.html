@@ -375,13 +375,17 @@ recHtml += `<div class="product-card"><strong>${recLabel}</strong> ${content}</d
   div.innerHTML = html;
 
   // Click en sugerencias: envía el texto del botón como nuevo mensaje del usuario
-  div.querySelectorAll('.suggestions button').forEach(btn => {
+    div.querySelectorAll('.suggestions button').forEach(btn => {
     btn.addEventListener('click', () => {
       const t = btn.getAttribute('data-sug');
-      // aquí llama a tu función existente que envía un mensaje del usuario:
-      sendQuick(t);
+      if (t === 'Ir a la tienda' || t === 'Go to shop') {
+        window.open('https://tienda.casa-alonso.es/', '_blank');
+      } else {
+        sendQuick(t);
+      }
     });
   });
+
 
   return div;
 }
