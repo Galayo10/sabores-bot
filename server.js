@@ -599,8 +599,8 @@ app.post('/api/chat', async (req, res) => {
      language === 'inglés' ? 'inglés' : 'español';
 
     // Intents y patrones
-    const reAdd = WP_BASE ? /(quiero|anadir|añade|pon|agrega|sumar|añadir|add)\s+(\d+)\s+(.+)/i : null;
-    const reVer = /^(ver carrito|carrito)$/i;
+    const reAdd = /(quiero|anadir|añade|pon|agrega|sumar|añadir|add)\s+(\d+)\s+(.+)/i;
+const reVerCesta = /(ver cesta|ver carrito|cesta|carrito|what's in my cart|view cart|my cart|show cart)/i;
     const reVac = /^(vaciar carrito|vaciar|limpiar carrito)$/i;
     const reConf = /^(confirmar pedido|confirmar|finalizar pedido)$/i;
     const reProductoQ =
@@ -614,10 +614,9 @@ app.post('/api/chat', async (req, res) => {
 
     let intent = 'other';
     if (reAdd.test(textoUser)) intent = 'add_to_cart';
-    else if (reProductoQ.test(textoUser) || cand || flavorTs.length) intent = 'product_query';
-    else if (reVer.test(textoUser)) intent = 'show_cart';
+    else if (reVerCesta.test(textoUser)) intent = 'show_cart';
     else if (reVac.test(textoUser)) intent = 'clear_cart';
-    else if (reConf.test(textoUser)) intent = 'confirm_order';
+    else if (reProductoQ.test(textoUser) || cand || flavorTs.length) intent = 'product_query';
 
     // Registrar
     appendMessage({
@@ -678,103 +677,52 @@ Sugerencias: Finalizar pedido | Ver carrito` });
       }
     }
 
-    // ---------- Intenciones carrito Woo ----------
-    if (reVer.test(textoUser)) {
-      const cart = await wooGetCart(sessionId);
-      const summary = renderWooCart(cart);
-      return res.json({ reply: `Carrito (tienda):\n${summary.text}\nTotal (sin envío): ${summary.total}€` });
+    // ---------- Ver cesta ----------
+    if (intent === 'show_cart') {
+      const cart = getCarrito(sessionId);
+      if (!cart.items.length) {
+        const msg = selectedLanguage === 'inglés'
+          ? 'Your cart is empty. Ask me about our products and I\'ll help you choose!\nSugerencias: Ver mermeladas | Encontrar mi mermelada perfecta'
+          : 'Tu cesta está vacía. ¡Pregúntame por nuestros productos y te ayudo a elegir!\nSugerencias: Ver mermeladas | Encontrar mi mermelada perfecta';
+        return res.json({ reply: msg, cart: [] });
+      }
+      const lineas = cart.items.map(it =>
+        `• ${it.cantidad} × ${it.producto.Producto} — ${(it.cantidad * it.precio).toFixed(2)}€`
+      );
+      const total = totalCarrito(cart).toFixed(2);
+      const msg = selectedLanguage === 'inglés'
+        ? `🛒 Your cart:\n${lineas.join('\n')}\nTotal: ${total}€\nSugerencias: Go to shop | Remove item | Empty cart`
+        : `🛒 Tu cesta:\n${lineas.join('\n')}\nTotal: ${total}€\nSugerencias: Ir a la tienda | Eliminar producto | Vaciar cesta`;
+      return res.json({ reply: msg, cart: cart.items });
     }
 
-    if (reVac.test(textoUser)) {
-      await wooEmptyCart(sessionId);
-      return res.json({ reply: 'He vaciado el carrito de la tienda.' });
-    }
-
-    if (reConf.test(textoUser)) {
-      // Sin Stripe aquí: cuando el widget esté dentro de WordPress (Opción A)
-      // abriremos /checkout con el carrito del navegador del cliente.
-      const cart = await wooGetCart(sessionId);
-      const summary = renderWooCart(cart);
-      return res.json({ reply:
-`Resumen antes de pagar:
-${summary.text}
-Total (sin envío): ${summary.total}€
-
-Para finalizar, abre el checkout de la tienda desde la web. (Cuando incrustemos el chat en WordPress, te llevaré directo a /checkout).` });
+    // ---------- Vaciar cesta ----------
+    if (intent === 'clear_cart') {
+      vaciarCarrito(sessionId);
+      const msg = selectedLanguage === 'inglés' ? 'Your cart has been emptied.' : 'He vaciado tu cesta.';
+      return res.json({ reply: msg, cart: [] });
     }
 
     // ---------- Añadir al carrito: usa Woo + variaciones ----------
     const m = textoUser.match(reAdd);
-    if (m) {
-      const cantidad = Math.max(1, parseInt(m[2], 10));
-      const resto = m[3];
-
-      // 1) Encuentra por NLP y/o texto
-      let candi = findCandidate(resto);
-      const searchName = candi?.Producto || resto;
-
-      // 2) Busca en Woo por nombre
-      const p = await wooFindProductByName(searchName);
-      if (!p) {
-        return res.json({ reply: 'Ahora mismo no encuentro ese producto en la tienda.' });
-      }
-
-      // 3) Producto variable → pedir variación
-      const stockCheck = wooCheckStock(p, cantidad);
-      if (!stockCheck.ok && stockCheck.reason === 'variable') {
-        const vars = await wooGetVariations(p.id);
-        if (!vars.length) {
-          return res.json({ reply: `Ese producto requiere elegir una variación, pero no encuentro opciones. ¿Puedes decirme tamaño/sabor?` });
-        }
-        // Construir opciones legibles
-        const opts = [];
-        for (const v of vars) {
-          const attr = (v.attributes||[]).map(a => ({ key: a.name, val: a.option }));
-          const label = attr.map(a => `${a.key}: ${a.val}`).join(' · ');
-          opts.push({
-            label: label || (v.name || `Var ${v.id}`),
-            attrKey: (v.attributes?.[0]?.name) || null, // ej. 'pa_tamano'
-            value: (v.attributes?.[0]?.option) || null, // ej. '250g'
-            variation_id: v.id
-          });
-        }
-        pendingVariation[sessionId] = { productId: p.id, productName: p.name, options: opts, qty: cantidad };
-
-        const lista = opts.slice(0,10).map((o,i)=>`• ${i+1}. ${o.label}`).join('\n');
-        return res.json({ reply:
-`Ese producto tiene variaciones. Elige una opción:
-${lista}
-
-Responde con el número (1-${Math.min(10,opts.length)}) o escribe el valor exacto (por ejemplo "250g").` });
-      }
-
-      // 4) Stock simple
-      if (!stockCheck.ok) {
-        if (stockCheck.reason === 'out') {
-          return res.json({ reply: `Ahora mismo **${p.name}** está **agotado**.` });
-        }
-        if (stockCheck.reason === 'low') {
-          return res.json({ reply: `Solo quedan **${stockCheck.available}** unidades de **${p.name}**. ¿Cuántas quieres?` });
-        }
-      }
-
-      // 5) Añadir simple
-      try {
-        await wooAddToCart(sessionId, p.id, cantidad);
-        const cart = await wooGetCart(sessionId);
-        const summary = renderWooCart(cart);
-        return res.json({ reply:
-`Añadido ✅
-${summary.text}
-Total (sin envío): ${summary.total}€
-
-Sugerencias: Finalizar pedido | Ver carrito` });
-      } catch (e) {
-        console.error('Woo add error', e?.response?.data || e.message);
-        return res.json({ reply: 'No he podido añadirlo al carrito ahora mismo. Intenta de nuevo en unos segundos.' });
+    if (intent === 'add_to_cart' && m) {
+      const cantidad = parseInt(m[2], 10) || 1;
+      const nombreBuscado = m[3].trim();
+      const prod = findCandidate(nombreBuscado) || findCandidateByName(nombreBuscado) || cand;
+      if (prod) {
+        const cart = addToCart(sessionId, prod, cantidad);
+        const total = totalCarrito(cart).toFixed(2);
+        const msg = selectedLanguage === 'inglés'
+          ? `✅ Added to your cart: ${cantidad} × ${prod.Producto}. Total so far: ${total}€\nSugerencias: Keep shopping | View cart | Go to shop`
+          : `✅ Añadido a tu cesta: ${cantidad} × ${prod.Producto}. Total hasta ahora: ${total}€\nSugerencias: Seguir comprando | Ver cesta | Ir a la tienda`;
+        return res.json({ reply: msg, cart: cart.items });
+      } else {
+        const msg = selectedLanguage === 'inglés'
+          ? 'Sorry, I couldn\'t find that product. Could you be more specific?'
+          : 'Lo siento, no encuentro ese producto. ¿Puedes ser más específico?';
+        return res.json({ reply: msg });
       }
     }
-
     // ---------- IA para preguntas normales (respuesta formateada) ----------
     const system = {
       role: 'system',
