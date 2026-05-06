@@ -130,7 +130,7 @@
           const data = await res.json();
           console.log("Respuesta recibida:", data);
           thinkingBubble.remove();
-          addAssistantMessage(data.reply || 'Lo siento, hemos tenido un error. Intente más tarde, o pruebe llamando al 927 56 02 92. Gracias por su paciencia.');
+          addAssistantMessage(data.reply || 'Lo siento, hemos tenido un error. Intente más tarde, o pruebe llamando al 927 56 02 92. Gracias por su paciencia.', data.cart);
           history.push({ role: 'assistant', content: data.reply || '' });
         } catch (err) {
           thinkingBubble.remove();
@@ -317,6 +317,112 @@ function renderTest(text) {
   return div;
 }
 
+// Estado de la cesta en el frontend
+const cestaState = { items: [], total: '0.00' };
+const SESSION_ID = localStorage.getItem('sg_session') || 'anon';
+
+function renderCesta() {
+  const div = document.createElement('div');
+  div.className = 'chat-msg assistant';
+  div.id = 'cestaWidget';
+
+  if (!cestaState.items.length) {
+    const lang = getLang();
+    div.innerHTML = `<div style="text-align:center; padding:8px; color:#666;">
+      ${lang === 'inglés' ? '🛒 Your cart is empty' : '🛒 Tu cesta está vacía'}
+    </div>`;
+    return div;
+  }
+
+  let html = `<div style="font-weight:600; margin-bottom:10px;">🛒 ${getLang() === 'inglés' ? 'Your cart' : 'Tu cesta'}</div>`;
+
+  cestaState.items.forEach(it => {
+    const nombre = it.producto.Producto;
+    const precio = Number(it.precio) || 0;
+    const subtotal = (it.cantidad * precio).toFixed(2);
+    html += `
+      <div style="display:flex; align-items:center; gap:8px; padding:8px 0; border-bottom:1px solid #eee;">
+        <div style="flex:1; font-size:13px;">${escapeHtml(nombre)}</div>
+        <div style="display:flex; align-items:center; gap:6px;">
+          <button class="cesta-btn" data-action="minus" data-prod="${escapeHtml(nombre)}" 
+            style="width:28px; height:28px; border-radius:50%; border:1.5px solid #849a6b; background:#fff; color:#849a6b; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center;">−</button>
+          <span style="font-size:14px; font-weight:600; min-width:20px; text-align:center;">${it.cantidad}</span>
+          <button class="cesta-btn" data-action="plus" data-prod="${escapeHtml(nombre)}"
+            style="width:28px; height:28px; border-radius:50%; border:1.5px solid #849a6b; background:#fff; color:#849a6b; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center;">+</button>
+        </div>
+        <div style="font-size:13px; min-width:50px; text-align:right; color:#555;">${subtotal}€</div>
+        <button class="cesta-btn" data-action="remove" data-prod="${escapeHtml(nombre)}"
+          style="width:28px; height:28px; border-radius:50%; border:1.5px solid #e55; background:#fff; color:#e55; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center;">🗑</button>
+      </div>`;
+  });
+
+  html += `
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; font-weight:600;">
+      <span>Total: ${cestaState.total}€</span>
+      <button class="cesta-btn" data-action="clear"
+        style="font-size:12px; color:#999; background:none; border:none; cursor:pointer; text-decoration:underline;">
+        ${getLang() === 'inglés' ? 'Empty cart' : 'Vaciar cesta'}
+      </button>
+    </div>
+    <a href="https://tienda.casa-alonso.es/" target="_blank"
+      style="display:block; margin-top:10px; background:#849a6b; color:#fff; text-align:center; padding:10px; border-radius:10px; text-decoration:none; font-size:14px; font-weight:500;">
+      ${getLang() === 'inglés' ? '🛍️ Go to shop' : '🛍️ Ir a la tienda'}
+    </a>`;
+
+  div.innerHTML = html;
+
+  div.querySelectorAll('.cesta-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const action = btn.getAttribute('data-action');
+      const prod = btn.getAttribute('data-prod');
+
+      if (action === 'clear') {
+        const res = await fetch('/api/cart/clear', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sessionId: SESSION_ID })
+        });
+        const data = await res.json();
+        cestaState.items = data.items;
+        cestaState.total = data.total;
+      } else if (action === 'remove') {
+        const res = await fetch('/api/cart/remove', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sessionId: SESSION_ID, producto: prod })
+        });
+        const data = await res.json();
+        cestaState.items = data.items;
+        cestaState.total = data.total;
+      } else {
+        const item = cestaState.items.find(it => it.producto.Producto === prod);
+        if (!item) return;
+        const nuevaCantidad = action === 'plus' ? item.cantidad + 1 : item.cantidad - 1;
+        const res = await fetch('/api/cart/update', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sessionId: SESSION_ID, producto: prod, cantidad: nuevaCantidad })
+        });
+        const data = await res.json();
+        cestaState.items = data.items;
+        cestaState.total = data.total;
+      }
+
+      // Actualizar el widget sin enviar mensaje
+      const existing = document.getElementById('cestaWidget');
+      const newWidget = renderCesta();
+      if (existing) existing.replaceWith(newWidget);
+      else {
+        const container = document.getElementById('messages');
+        container.appendChild(newWidget);
+        container.scrollTop = container.scrollHeight;
+      }
+    });
+  });
+
+  return div;
+}
+
 // Convierte texto con bullets y secciones a HTML simple
 function renderAssistant(text){
   const div = document.createElement('div');
@@ -424,7 +530,7 @@ async function sendTextToChat(text){
     const res = await Promise.race([fetchPromise, timeout]);
     const data = await res.json();
     thinkingBubble.remove();
-    addAssistantMessage(data.reply || i18n[getLang()].error);
+    addAssistantMessage(data.reply || i18n[getLang()].error, data.cart);
     history.push({ role:'assistant', content: data.reply || '' });
   } catch (err) {
     thinkingBubble.remove();
@@ -437,10 +543,25 @@ async function sendTextToChat(text){
 }
 
 // Envoltorios para añadir mensajes al chat
-function addAssistantMessage(text){
+function addAssistantMessage(text, cartItems){
   const container = document.getElementById('messages');
-  const el = esMermeladaTest(text) ? renderTest(text) : renderAssistant(text);
+  let el;
+  if (esMermeladaTest(text)) {
+    el = renderTest(text);
+  } else {
+    el = renderAssistant(text);
+  }
   container.appendChild(el);
+
+  // Si la respuesta incluye cesta, mostrar widget
+  if (cartItems !== undefined) {
+    cestaState.items = cartItems;
+    cestaState.total = cartItems.reduce((acc, it) => acc + it.cantidad * (Number(it.precio) || 0), 0).toFixed(2);
+    const existing = document.getElementById('cestaWidget');
+    if (existing) existing.replaceWith(renderCesta());
+    else container.appendChild(renderCesta());
+  }
+
   container.scrollTop = container.scrollHeight;
 }
 </script>

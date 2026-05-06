@@ -128,6 +128,48 @@ app.post('/logout', (req, res) => {
   req.session.destroy(() => res.redirect('/login'));
 });
 
+// ------------------------- API Cesta -------------------------
+app.post('/api/cart/add', (req, res) => {
+  const { sessionId, producto, cantidad } = req.body;
+  const prod = productos.find(p => normaliza(p.Producto) === normaliza(producto));
+  if (!prod) return res.json({ ok: false });
+  const cart = addToCart(sessionId, prod, cantidad || 1);
+  res.json({ ok: true, items: cart.items, total: totalCarrito(cart).toFixed(2) });
+});
+
+app.post('/api/cart/remove', (req, res) => {
+  const { sessionId, producto } = req.body;
+  const cart = getCarrito(sessionId);
+  cart.items = cart.items.filter(it => normaliza(it.producto.Producto) !== normaliza(producto));
+  res.json({ ok: true, items: cart.items, total: totalCarrito(cart).toFixed(2) });
+});
+
+app.post('/api/cart/update', (req, res) => {
+  const { sessionId, producto, cantidad } = req.body;
+  const cart = getCarrito(sessionId);
+  const item = cart.items.find(it => normaliza(it.producto.Producto) === normaliza(producto));
+  if (item) {
+    if (cantidad <= 0) {
+      cart.items = cart.items.filter(it => normaliza(it.producto.Producto) !== normaliza(producto));
+    } else {
+      item.cantidad = cantidad;
+    }
+  }
+  res.json({ ok: true, items: cart.items, total: totalCarrito(cart).toFixed(2) });
+});
+
+app.post('/api/cart/clear', (req, res) => {
+  const { sessionId } = req.body;
+  vaciarCarrito(sessionId);
+  res.json({ ok: true, items: [], total: '0.00' });
+});
+
+app.get('/api/cart', (req, res) => {
+  const sessionId = req.query.sessionId || 'anon';
+  const cart = getCarrito(sessionId);
+  res.json({ items: cart.items, total: totalCarrito(cart).toFixed(2) });
+});
+
 // ------------------------- Rutas públicas (chat & embed) -------------------------
 app.get('/embed', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'embed.html'));
