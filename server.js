@@ -643,6 +643,7 @@ app.post('/api/chat', async (req, res) => {
     // Intents y patrones
     const reAdd = /(quiero|anadir|añade|pon|agrega|sumar|añadir|add)\s+(\d+)\s+(.+)/i;
 const reVerCesta = /(ver cesta|ver carrito|cesta|carrito|what's in my cart|view cart|my cart|show cart)/i;
+const reCambiarCesta = /(cambia|cambiar|quitar|reemplaza|sustituye|en vez|en lugar|change|replace|swap|remove|instead)/i;
     const reVac = /^(vaciar carrito|vaciar|limpiar carrito)$/i;
     const reConf = /^(confirmar pedido|confirmar|finalizar pedido)$/i;
     const reProductoQ =
@@ -657,6 +658,7 @@ const reVerCesta = /(ver cesta|ver carrito|cesta|carrito|what's in my cart|view 
     let intent = 'other';
     if (reAdd.test(textoUser)) intent = 'add_to_cart';
     else if (reVerCesta.test(textoUser)) intent = 'show_cart';
+    else if (reCambiarCesta.test(textoUser)) intent = 'other'; // deja que la IA lo gestione
     else if (reVac.test(textoUser)) intent = 'clear_cart';
     else if (reProductoQ.test(textoUser) || cand || flavorTs.length) intent = 'product_query';
 
@@ -735,7 +737,7 @@ Sugerencias: Finalizar pedido | Ver carrito` });
       const msg = selectedLanguage === 'inglés'
         ? `🛒 Your cart:\n${lineas.join('\n')}\nTotal: ${total}€\nSugerencias: Go to shop | Remove item | Empty cart`
         : `🛒 Tu cesta:\n${lineas.join('\n')}\nTotal: ${total}€\nSugerencias: Ir a la tienda | Eliminar producto | Vaciar cesta`;
-      return res.json({ reply: msg, cart: cart.items });
+      return res.json({ reply: msg });
     }
 
     // ---------- Vaciar cesta ----------
@@ -750,13 +752,17 @@ Sugerencias: Finalizar pedido | Ver carrito` });
     if (intent === 'add_to_cart' && m) {
       const cantidad = parseInt(m[2], 10) || 1;
       const nombreBuscado = m[3].trim();
-      const prod = findCandidate(nombreBuscado) || findCandidateByName(nombreBuscado) || cand;
+      const prodExacto = productos.find(p => 
+  normaliza(p.Producto).includes(normaliza(nombreBuscado)) ||
+  normaliza(nombreBuscado).includes(normaliza(p.Producto).split(' ').slice(1).join(' '))
+);
+const prod = prodExacto || findCandidate(nombreBuscado) || findCandidateByName(nombreBuscado) || cand;
       if (prod) {
         const cart = addToCart(sessionId, prod, cantidad);
         const total = totalCarrito(cart).toFixed(2);
         const msg = selectedLanguage === 'inglés'
-          ? `✅ Added to your cart: ${cantidad} × ${prod.Producto}. Total so far: ${total}€\nSugerencias: Keep shopping | View cart | Go to shop`
-          : `✅ Añadido a tu cesta: ${cantidad} × ${prod.Producto}. Total hasta ahora: ${total}€\nSugerencias: Seguir comprando | Ver cesta | Ir a la tienda`;
+          ? `✅ Added to your cart: ${cantidad} × ${prod.Producto}. Total so far: ${total}€\nSuggestions: View cart | Go to shop`
+          : `✅ Añadido a tu cesta: ${cantidad} × ${prod.Producto}. Total hasta ahora: ${total}€\nSugerencias: Ver cesta | Ir a la tienda`;
         return res.json({ reply: msg, cart: cart.items });
       } else {
         const msg = selectedLanguage === 'inglés'
@@ -791,6 +797,10 @@ CONTENIDO:
 - Responde con entusiasmo y detalle preguntas sobre: productos, envíos, historia de la empresa, el pueblo (El Guijo de Santa Bárbara), la zona, la comarca (La Vera), turismo, rutas, naturaleza, gargantas, fiestas locales como Los Empalaos o Los Escobazos, el Monasterio de Yuste y el Parador de Jarandilla.
 - Si alguien pregunta por "el pueblo", "la zona", "el lugar", "where are you from", "where is the shop", "tell me about the area" o similares, responde hablando de El Guijo de Santa Bárbara y La Vera con detalle usando la información del manual interno.
 - Solo redirige al cliente si pregunta algo completamente ajeno como política, deportes u otros temas sin relación.
+
+GESTIÓN DE CESTA:
+- Si el cliente quiere cambiar un producto de la cesta por otro (ej: "cambia la mermelada con azúcar por la sin azúcar"), primero confirma qué producto quiere eliminar y cuál añadir, luego dile que use los botones de la cesta o que te diga "añadir 1 [producto nuevo]".
+- Si el cliente quiere eliminar algo, dile que use el botón 🗑️ en la cesta o que diga "vaciar cesta".
 
 DERIVACIÓN AL HUMANO:
 - Si alguien menciona: un problema con un pedido, una queja, una devolución, un pedido dañado, un retraso en el envío, una factura, o cualquier gestión administrativa — NO intentes resolverlo tú.
@@ -827,7 +837,7 @@ que encantará a todos.
 • Al no tener pepitas, su textura es muy agradable, lo que la hace perfecta para los más pequeños.
 • Esta mermelada es 100% natural, sin conservantes ni colorantes artificiales, manteniendo la tradición artesanal de nuestra familia.
 Recomendación: Mermelada Extra de Frambuesa sin Pepitas. (4,25€)
-Sugerencias: Añadir 1 Mermelada de Frambuesa sin Pepitas | Ver carrito | Ver envíos
+Sugerencias: Añadir 1 Mermelada de Frambuesa sin Pepitas | Ver cesta | Ver envíos
 
 ENCONTRAR LA MERMELADA PERFECTA:
 - Si el cliente pide ayuda para encontrar su mermelada perfecta o no sabe qué mermelada elegir, ya sea en español ("ayúdame a elegir", "no sé qué mermelada comprar", "mermelada perfecta"...) o en inglés ("help me choose", "help me find a jam", "what jam should I get", "perfect jam", "recommend a jam"...), NO des un listado. Inicia el proceso con exactamente este mensaje:
