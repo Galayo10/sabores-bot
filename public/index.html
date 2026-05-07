@@ -481,10 +481,55 @@ recHtml += `<div class="product-card"><strong>${recLabel}</strong> ${content}</d
 
   // Click en sugerencias: envía el texto del botón como nuevo mensaje del usuario
     div.querySelectorAll('.suggestions button').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', async () => {
       const t = btn.getAttribute('data-sug');
+
       if (t === 'Ir a la tienda' || t === 'Go to shop') {
         window.open('https://tienda.casa-alonso.es/', '_blank');
+
+      } else if (t.startsWith('Añadir') || t.startsWith('Add')) {
+        // Extraer cantidad y nombre del producto del texto del botón
+        const match = t.match(/^(?:Añadir|Add)\s+(\d+)\s+(.+)$/i);
+        if (!match) return;
+        const cantidad = parseInt(match[1], 10) || 1;
+        const nombreProducto = match[2].trim();
+
+        // Llamar directamente a la API sin pasar por el bot
+        try {
+          const res = await fetch('/api/cart/add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sessionId: SESSION_ID, producto: nombreProducto, cantidad })
+          });
+          const data = await res.json();
+          if (data.ok) {
+            cestaState.items = data.items;
+            cestaState.total = data.total;
+            // Mostrar confirmación pequeña sin enviar mensaje
+            btn.textContent = '✅ Añadido';
+            btn.style.background = '#2a7c3f';
+            btn.style.color = '#fff';
+            btn.style.borderColor = '#2a7c3f';
+            btn.disabled = true;
+            // Actualizar widget si ya está visible
+            const existing = document.getElementById('cestaWidget');
+            if (existing) existing.replaceWith(renderCesta());
+          }
+        } catch (err) {
+          console.error('Error añadiendo al carrito:', err);
+        }
+
+      } else if (t === 'Ver cesta' || t === 'View cart') {
+        // Mostrar widget de cesta sin enviar mensaje
+        const existing = document.getElementById('cestaWidget');
+        if (existing) {
+          existing.scrollIntoView({ behavior: 'smooth' });
+        } else {
+          const container = document.getElementById('messages');
+          container.appendChild(renderCesta());
+          container.scrollTop = container.scrollHeight;
+        }
+
       } else {
         sendQuick(t);
       }
