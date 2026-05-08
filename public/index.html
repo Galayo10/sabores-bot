@@ -319,7 +319,7 @@ function renderTest(text) {
 
 // Estado de la cesta en el frontend
 const cestaState = { items: [], total: '0.00' };
-const SESSION_ID = localStorage.getItem('sg_session') || 'anon';
+const SESSION_ID = 'session_' + Date.now() + '_' + Math.random().toString(36).slice(2);
 
 function renderCesta() {
   const div = document.createElement('div');
