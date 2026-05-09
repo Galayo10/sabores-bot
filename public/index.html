@@ -112,6 +112,17 @@
       async function sendMessage() {
         const text = $input.value.trim();
         if (!text) return;
+          // Interceptar "ver cesta" para mostrar widget directamente
+        if (/ver cesta|ver carrito|view cart|my cart/i.test(text)) {
+          $input.value = '';
+          const container = document.getElementById('messages');
+          addMessage(text, 'user');
+          const existing = document.getElementById('cestaWidget');
+          if (existing) existing.remove();
+          container.appendChild(renderCesta());
+          container.scrollTop = container.scrollHeight;
+          return;
+        }
         addMessage(text, 'user');
         history.push({ role: 'user', content: text });
         $input.value = '';
@@ -520,15 +531,12 @@ recHtml += `<div class="product-card"><strong>${recLabel}</strong> ${content}</d
         }
 
       } else if (t === 'Ver cesta' || t === 'View cart') {
-        // Mostrar widget de cesta sin enviar mensaje
+        // Siempre crear una cesta nueva al final del chat
+        const container = document.getElementById('messages');
         const existing = document.getElementById('cestaWidget');
-        if (existing) {
-          existing.scrollIntoView({ behavior: 'smooth' });
-        } else {
-          const container = document.getElementById('messages');
-          container.appendChild(renderCesta());
-          container.scrollTop = container.scrollHeight;
-        }
+        if (existing) existing.remove();
+        container.appendChild(renderCesta());
+        container.scrollTop = container.scrollHeight;
 
       } else {
         sendQuick(t);
