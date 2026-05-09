@@ -521,7 +521,14 @@ recHtml += `<div class="product-card"><strong>${recLabel}</strong> ${content}</d
             btn.style.background = '#2a7c3f';
             btn.style.color = '#fff';
             btn.style.borderColor = '#2a7c3f';
-            btn.disabled = true;
+            // Reactivar después de 2 segundos
+            setTimeout(() => {
+              btn.textContent = t;
+              btn.style.background = '#fff';
+              btn.style.color = '#000';
+              btn.style.borderColor = '#6e6e6e';
+              btn.disabled = false;
+            }, 2000);
             // Actualizar widget si ya está visible
             const existing = document.getElementById('cestaWidget');
             if (existing) existing.replaceWith(renderCesta());

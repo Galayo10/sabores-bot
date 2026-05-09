@@ -510,6 +510,7 @@ recHtml += `<div class="product-card"><strong>${recLabel}</strong> ${content}</d
           const res = await fetch('/api/cart/add', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
+            console.log('Añadiendo con SESSION_ID:', SESSION_ID, 'producto:', nombreProducto);
             body: JSON.stringify({ sessionId: SESSION_ID, producto: nombreProducto, cantidad })
           });
           const data = await res.json();
@@ -517,11 +518,20 @@ recHtml += `<div class="product-card"><strong>${recLabel}</strong> ${content}</d
             cestaState.items = data.items;
             cestaState.total = data.total;
             // Mostrar confirmación pequeña sin enviar mensaje
+            
             btn.textContent = '✅ Añadido';
             btn.style.background = '#2a7c3f';
             btn.style.color = '#fff';
             btn.style.borderColor = '#2a7c3f';
-            btn.disabled = true;
+            // Reactivar después de 2 segundos
+            setTimeout(() => {
+              btn.textContent = t;
+              btn.style.background = '#fff';
+              btn.style.color = '#000';
+              btn.style.borderColor = '#6e6e6e';
+              btn.disabled = false;
+            }, 2000);
+
             // Actualizar widget si ya está visible
             const existing = document.getElementById('cestaWidget');
             if (existing) existing.replaceWith(renderCesta());
