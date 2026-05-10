@@ -136,7 +136,7 @@
           const res = await fetch('/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ messages: history, language: $lang.value })
+            body: JSON.stringify({ messages: history, language: $lang.value, sessionId: SESSION_ID })
           });
           const data = await res.json();
           console.log("Respuesta recibida:", data);
@@ -510,7 +510,7 @@ recHtml += `<div class="product-card"><strong>${recLabel}</strong> ${content}</d
           const res = await fetch('/api/cart/add', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            console.log('Añadiendo con SESSION_ID:', SESSION_ID, 'producto:', nombreProducto);
+          
             body: JSON.stringify({ sessionId: SESSION_ID, producto: nombreProducto, cantidad })
           });
           const data = await res.json();
@@ -584,7 +584,7 @@ async function sendTextToChat(text){
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        sessionId: localStorage.getItem('sg_session') || 'anon',
+        sessionId: SESSION_ID,
         language: $lang.value,
         messages: [...history]
       })
