@@ -131,8 +131,15 @@ app.post('/logout', (req, res) => {
 // ------------------------- API Cesta -------------------------
 app.post('/api/cart/add', (req, res) => {
   const { sessionId, producto, cantidad } = req.body;
-  const prod = productos.find(p => normaliza(p.Producto) === normaliza(producto));
-  if (!prod) return res.json({ ok: false });
+  let prod = productos.find(p => normaliza(p.Producto) === normaliza(producto));
+  if (!prod) prod = productos.find(p => normaliza(p.Producto).includes(normaliza(producto)));
+  if (!prod) prod = productos.find(p => normaliza(producto).includes(normaliza(p.Producto)));
+  if (!prod) {
+    // Buscar por palabras clave
+    const words = normaliza(producto).split(' ').filter(w => w.length > 3);
+    prod = productos.find(p => words.every(w => normaliza(p.Producto).includes(w)));
+  }
+  if (!prod) return res.json({ ok: false, error: 'Producto no encontrado: ' + producto });
   const cart = addToCart(sessionId, prod, cantidad || 1);
   res.json({ ok: true, items: cart.items, total: totalCarrito(cart).toFixed(2) });
 });
@@ -656,9 +663,7 @@ const reCambiarCesta = /(cambia|cambiar|quitar|reemplaza|sustituye|en vez|en lug
     const missing = flavorTs.filter(t => !catalogFlavorSet.has(t));
 
     let intent = 'other';
-    if (reAdd.test(textoUser)) intent = 'add_to_cart';
-    else if (reVerCesta.test(textoUser)) intent = 'show_cart';
-    else if (reCambiarCesta.test(textoUser)) intent = 'other'; // deja que la IA lo gestione
+    if (reVerCesta.test(textoUser)) intent = 'show_cart';
     else if (reVac.test(textoUser)) intent = 'clear_cart';
     else if (reProductoQ.test(textoUser) || cand || flavorTs.length) intent = 'product_query';
 
@@ -749,28 +754,7 @@ Sugerencias: Finalizar pedido | Ver carrito` });
 
     // ---------- Añadir al carrito: usa Woo + variaciones ----------
     const m = textoUser.match(reAdd);
-    if (intent === 'add_to_cart' && m) {
-      const cantidad = parseInt(m[2], 10) || 1;
-      const nombreBuscado = m[3].trim();
-      const prodExacto = productos.find(p => 
-  normaliza(p.Producto).includes(normaliza(nombreBuscado)) ||
-  normaliza(nombreBuscado).includes(normaliza(p.Producto).split(' ').slice(1).join(' '))
-);
-const prod = prodExacto || findCandidate(nombreBuscado) || findCandidateByName(nombreBuscado) || cand;
-      if (prod) {
-        const cart = addToCart(sessionId, prod, cantidad);
-        const total = totalCarrito(cart).toFixed(2);
-        const msg = selectedLanguage === 'inglés'
-          ? `✅ Added to your cart: ${cantidad} × ${prod.Producto}. Total so far: ${total}€\nSuggestions: View cart | Go to shop`
-          : `✅ Añadido a tu cesta: ${cantidad} × ${prod.Producto}. Total hasta ahora: ${total}€\nSugerencias: Ver cesta | Ir a la tienda`;
-        return res.json({ reply: msg, cart: cart.items });
-      } else {
-        const msg = selectedLanguage === 'inglés'
-          ? 'Sorry, I couldn\'t find that product. Could you be more specific?'
-          : 'Lo siento, no encuentro ese producto. ¿Puedes ser más específico?';
-        return res.json({ reply: msg });
-      }
-    }
+    // El carrito lo gestionan los botones directamente
     // ---------- IA para preguntas normales (respuesta formateada) ----------
     const system = {
       role: 'system',
@@ -799,8 +783,9 @@ CONTENIDO:
 - Solo redirige al cliente si pregunta algo completamente ajeno como política, deportes u otros temas sin relación.
 
 GESTIÓN DE CESTA:
-- Si el cliente quiere cambiar un producto de la cesta por otro (ej: "cambia la mermelada con azúcar por la sin azúcar"), primero confirma qué producto quiere eliminar y cuál añadir, luego dile que use los botones de la cesta o que te diga "añadir 1 [producto nuevo]".
-- Si el cliente quiere eliminar algo, dile que use el botón 🗑️ en la cesta o que diga "vaciar cesta".
+- Cuando el cliente quiera cambiar o sustituir un producto, responde con un mensaje de confirmación que termine SIEMPRE con esta línea exacta en español: "Sugerencias: ✅ Confirmar | ❌ Cancelar", y el inglés: "Sugerencias: ✅ Confirm | ❌ Cancel"
+- Si el cliente confirma, procede con el cambio.
+- Si cancela, responde que no hay problema.
 
 DERIVACIÓN AL HUMANO:
 - Si alguien menciona: un problema con un pedido, una queja, una devolución, un pedido dañado, un retraso en el envío, una factura, o cualquier gestión administrativa — NO intentes resolverlo tú.

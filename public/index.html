@@ -495,6 +495,11 @@ recHtml += `<div class="product-card"><strong>${recLabel}</strong> ${content}</d
     btn.addEventListener('click', async () => {
       const t = btn.getAttribute('data-sug');
 
+if (t === '✅ Confirmar' || t === '❌ Cancelar' || t === '✅ Confirm' || t === '❌ Cancel') {
+        sendQuick(t);
+        return;
+      }
+
       if (t === 'Ir a la tienda' || t === 'Go to shop') {
         window.open('https://tienda.casa-alonso.es/', '_blank');
 
