@@ -141,7 +141,7 @@ app.post('/api/cart/add', (req, res) => {
   }
   if (!prod) return res.json({ ok: false, error: 'Producto no encontrado: ' + producto });
   const cart = addToCart(sessionId, prod, cantidad || 1);
-  res.json({ ok: true, items: cart.items, total: totalCarrito(cart).toFixed(2) });
+  res.json({ ok: true, items: cart.items, total: totalCarrito(cart).toFixed(2), nombreProducto: prod.Producto });
 });
 
 app.post('/api/cart/remove', (req, res) => {
