@@ -739,10 +739,7 @@ Sugerencias: Finalizar pedido | Ver carrito` });
         `• ${it.cantidad} × ${it.producto.Producto} — ${(it.cantidad * it.precio).toFixed(2)}€`
       );
       const total = totalCarrito(cart).toFixed(2);
-      const msg = selectedLanguage === 'inglés'
-        ? `🛒 Your cart:\n${lineas.join('\n')}\nTotal: ${total}€\nSugerencias: Go to shop | Remove item | Empty cart`
-        : `🛒 Tu cesta:\n${lineas.join('\n')}\nTotal: ${total}€\nSugerencias: Ir a la tienda | Eliminar producto | Vaciar cesta`;
-      return res.json({ reply: msg });
+     return res.json({ reply: '', cart: cart.items });
     }
 
     // ---------- Vaciar cesta ----------
