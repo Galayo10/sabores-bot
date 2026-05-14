@@ -131,14 +131,19 @@ app.post('/logout', (req, res) => {
 // ------------------------- API Cesta -------------------------
 app.post('/api/cart/add', (req, res) => {
   const { sessionId, producto, cantidad } = req.body;
-  let prod = productos.find(p => normaliza(p.Producto) === normaliza(producto));
-  if (!prod) prod = productos.find(p => normaliza(p.Producto).includes(normaliza(producto)));
-  if (!prod) prod = productos.find(p => normaliza(producto).includes(normaliza(p.Producto)));
-  if (!prod) {
-    // Buscar por palabras clave
-    const words = normaliza(producto).split(' ').filter(w => w.length > 3);
-    prod = productos.find(p => words.every(w => normaliza(p.Producto).includes(w)));
-  }
+  // Traducir al español antes de buscar
+  const productoEs = translateToEs(producto);
+  const buscar = (texto) => {
+    let p = productos.find(p => normaliza(p.Producto) === normaliza(texto));
+    if (!p) p = productos.find(p => normaliza(p.Producto).includes(normaliza(texto)));
+    if (!p) p = productos.find(p => normaliza(texto).includes(normaliza(p.Producto)));
+    if (!p) {
+      const words = normaliza(texto).split(' ').filter(w => w.length > 3);
+      if (words.length) p = productos.find(pr => words.filter(w => normaliza(pr.Producto).includes(w)).length >= Math.ceil(words.length * 0.6));
+    }
+    return p;
+  };
+  let prod = buscar(productoEs) || buscar(producto);
   if (!prod) return res.json({ ok: false, error: 'Producto no encontrado: ' + producto });
   const cart = addToCart(sessionId, prod, cantidad || 1);
   res.json({ ok: true, items: cart.items, total: totalCarrito(cart).toFixed(2), nombreProducto: prod.Producto });
