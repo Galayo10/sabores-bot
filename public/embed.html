@@ -30,6 +30,8 @@
 .chat-msg li { margin:4px 0; }
 .suggestions { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
 .suggestions button { border:2px solid #6e6e6e; background:#fff; border-radius:999px; padding:6px 10px; cursor:pointer; font-size:12px; }
+.inicio-btn { border:2px solid #6e6e6e; background:#fff; border-radius:999px; padding:6px 10px; cursor:pointer; font-size:12px; color:#000; }
+.inicio-btn:hover { background:#2a7c3f; color:#fff; border-color:#2a7c3f; }
 .suggestions button:hover { background:#2a7c3f; color:#fff; border-color:#2a7c3f; }
 .product-card { border:1px solid #6e6e6e; border-radius:12px; padding:8px 10px; margin-top:8px; background:#fafafa; }
 #send {
@@ -669,6 +671,54 @@ function addAssistantMessage(text, cartItems){
   // Arranque inicial — va aquí al final para que todo esté cargado
   document.getElementById('lang').value = 'español';
   applyLanguage();
+
+  // Respuestas fijas para los botones iniciales
+  const _respFijas = {
+    'español': {
+      '¿Qué productos tenéis?': 'En Sabores del Guijo elaboramos artesanalmente:\n• Mermeladas — jaleas y conservas de fruta de temporada\n• Vinagres — de frutas, elaborados con nuestras propias frutas\n• Licores — tradicionales y artesanales\n• Membrillo — dulce de membrillo artesanal\n• Otros — productos seleccionados de la comarca de La Vera\n¿Sobre cuál quieres saber más?\nSugerencias: Mermeladas | Vinagres | Licores | Membrillo',
+      '¿Cómo puedo comprar?': 'Es muy sencillo:\n• Añade los productos que quieras a tu cesta escribiéndome, por ejemplo "añade mermelada de higo".\n• También puedes pulsar el botón "Añadir" que aparece junto a cada producto.\n• Cuando estés listo, pulsa "Ir a la tienda" en tu cesta para finalizar el pago en nuestra tienda online.\n¿Te ayudo a elegir algo?\nSugerencias: Encontrar mi mermelada perfecta 🍓 | Ver productos',
+      '¿Qué visitar en El Guijo?': 'El Guijo de Santa Bárbara es un precioso pueblo al norte de Cáceres, en la comarca de La Vera.\n• Rodeado de gargantas naturales y rutas de montaña espectaculares.\n• La comarca de La Vera cuenta con el famoso Monasterio de Yuste, última morada del Emperador Carlos V.\n• El Parador de Jarandilla, antiguo castillo de verano de los Condes de Oropesa.\n• Fiestas únicas como Los Empalaos (Semana Santa) y Los Escobazos (7 de diciembre).\n• Y por supuesto, el famoso Pimentón de La Vera y nuestras mermeladas artesanales.\nSugerencias: ¿Qué productos tenéis? | ¿Cómo puedo comprar?',
+    },
+    'inglés': {
+      'What products do you have?': 'At Sabores del Guijo we artisanally produce:\n• Jams — fruit preserves made with seasonal fruits\n• Vinegars — fruit vinegars made with our own fruits\n• Liqueurs — traditional and artisanal\n• Quince — artisanal quince jelly\n• Others — selected products from the La Vera region\nWhat would you like to know more about?\nSugerencias: Jams | Vinegars | Liqueurs | Quince',
+      'How can I buy?': 'It\'s very simple:\n• Add the products you want to your cart by writing to me, for example "add fig jam".\n• You can also press the "Add" button next to each product.\n• When you\'re ready, press "Go to shop" in your cart to complete the payment.\nCan I help you choose something?\nSugerencias: Find my perfect jam 🍓 | View products',
+      'What to visit in El Guijo?': 'El Guijo de Santa Bárbara is a beautiful village in the La Vera region, Cáceres.\n• Surrounded by natural gorges and spectacular mountain trails.\n• The region is home to the famous Yuste Monastery, last residence of Emperor Charles V.\n• The Jarandilla Parador, former summer castle of the Counts of Oropesa.\n• Unique festivals like Los Empalaos (Holy Week) and Los Escobazos (December 7th).\n• And of course, the famous La Vera Paprika and our artisanal jams.\nSugerencias: What products do you have? | How can I buy?',
+    }
+  };
+
+  // Redefinir showWelcome con los botones iniciales
+  showWelcome = function() {
+    $messages.innerHTML = '';
+    const lang = getLang();
+    const botones = lang === 'inglés'
+      ? ['Find my perfect jam 🍓', 'What products do you have?', 'How can I buy?', 'What to visit in El Guijo?']
+      : ['Encontrar mi mermelada perfecta 🍓', '¿Qué productos tenéis?', '¿Cómo puedo comprar?', '¿Qué visitar en El Guijo?'];
+
+    const div = document.createElement('div');
+    div.className = 'chat-msg assistant';
+    div.innerHTML = `
+      <div style="margin-bottom:10px; font-size:14px; line-height:1.5;">${i18n[lang].welcome}</div>
+      <div style="display:flex; flex-direction:column; gap:6px;">
+        ${botones.map(b => `<button type="button" class="inicio-btn" data-txt="${escapeHtml(b)}">${b}</button>`).join('')}
+      </div>`;
+
+    div.querySelectorAll('.inicio-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const txt = btn.getAttribute('data-txt');
+        const respFijas = _respFijas[lang === 'inglés' ? 'inglés' : 'español'];
+        addMessage(txt, 'user');
+        if (txt === 'Encontrar mi mermelada perfecta 🍓' || txt === 'Find my perfect jam 🍓') {
+          sendTextToChat(txt);
+        } else {
+          addAssistantMessage(respFijas[txt]);
+        }
+      });
+    });
+
+    $messages.appendChild(div);
+    $messages.scrollTop = $messages.scrollHeight;
+  };
+
   showWelcome();
 </script>
   </body>
