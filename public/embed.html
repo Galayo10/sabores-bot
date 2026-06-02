@@ -469,6 +469,108 @@ function renderCesta() {
   return div;
 }
 
+function esComparacion(text) {
+  const lineas = text.split('\n').map(l => l.trim());
+  const prods = lineas.filter(l => l.startsWith('Producto:') || l.startsWith('Product:'));
+  return prods.length >= 2;
+}
+
+function renderComparacion(text) {
+  const div = document.createElement('div');
+  div.className = 'chat-msg assistant';
+
+  const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+  let intro = '';
+  let productos = [];
+  let currentProd = null;
+  let recHtml = '';
+  let sugg = [];
+
+  for (const l of lines) {
+    if (l.startsWith('Producto:') || l.startsWith('Product:')) {
+      if (currentProd) productos.push(currentProd);
+      currentProd = { nombre: l.split(':').slice(1).join(':').trim(), puntos: [] };
+    } else if (l.startsWith('•') && currentProd) {
+      currentProd.puntos.push(l.slice(1).trim());
+    } else if (l.toLowerCase().startsWith('recomendación:') || l.toLowerCase().startsWith('recomendacion:') || l.toLowerCase().startsWith('recommendation:')) {
+      const content = escapeHtml(l.split(':').slice(1).join(':').trim());
+      const recLabel = getLang() === 'inglés' ? 'Recommendation:' : 'Recomendación:';
+      recHtml = `<div class="product-card" style="margin-top:10px;"><strong>${recLabel}</strong> ${content}</div>`;
+    } else if (l.toLowerCase().startsWith('sugerencias:') || l.toLowerCase().startsWith('suggestions:')) {
+      const raw = l.split(':').slice(1).join(':').trim();
+      sugg = raw.split('|').map(s => s.trim()).filter(Boolean);
+    } else if (!intro && !currentProd) {
+      intro = l;
+    }
+  }
+  if (currentProd) productos.push(currentProd);
+
+  let html = '';
+  if (intro) html += `<div style="margin-bottom:12px; font-size:14px; line-height:1.5;">${escapeHtml(intro)}</div>`;
+
+  html += `<div style="display:grid; grid-template-columns:repeat(${Math.min(productos.length, 2)}, 1fr); gap:10px; margin-bottom:10px;">`;
+  for (const p of productos) {
+    html += `<div style="border:1.5px solid #849a6b; border-radius:12px; padding:10px; background:#f9fcf5;">
+      <div style="font-weight:600; font-size:13px; color:#3a5a28; margin-bottom:8px; text-align:center; border-bottom:1px solid #d4e8c0; padding-bottom:6px;">${escapeHtml(p.nombre)}</div>
+      <ul style="margin:0; padding-left:16px; font-size:13px; line-height:1.9; color:#333;">
+        ${p.puntos.map(pt => `<li>${escapeHtml(pt)}</li>`).join('')}
+      </ul>
+    </div>`;
+  }
+  html += `</div>`;
+
+  if (recHtml) html += recHtml;
+
+  if (sugg.length) {
+    html += '<div class="suggestions">' + sugg.map(s => `<button type="button" data-sug="${escapeHtml(s)}">${escapeHtml(s)}</button>`).join('') + '</div>';
+  }
+
+  div.innerHTML = html;
+
+  div.querySelectorAll('.suggestions button').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const t = btn.getAttribute('data-sug');
+      if (t === 'Ir a la tienda' || t === 'Go to shop') {
+        window.open('https://tienda.casa-alonso.es/', '_blank');
+      } else if (t.startsWith('Añadir') || t.startsWith('Add')) {
+        const match = t.match(/^(?:Añadir|Add)\s+(\d+)\s+(.+)$/i);
+        if (!match) return;
+        const cantidad = parseInt(match[1], 10) || 1;
+        const nombreProducto = match[2].trim();
+        try {
+          const res = await fetch('/api/cart/add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sessionId: SESSION_ID, producto: nombreProducto, cantidad })
+          });
+          const data = await res.json();
+          if (data.ok) {
+            cestaState.items = data.items;
+            cestaState.total = data.total;
+            btn.textContent = '✅ ' + (getLang() === 'inglés' ? 'Added' : 'Añadido');
+            btn.style.background = '#2a7c3f';
+            btn.style.color = '#fff';
+            btn.style.borderColor = '#2a7c3f';
+            setTimeout(() => {
+              btn.textContent = t;
+              btn.style.background = '#fff';
+              btn.style.color = '#000';
+              btn.style.borderColor = '#6e6e6e';
+              btn.disabled = false;
+            }, 2000);
+            const existing = document.getElementById('cestaWidget');
+            if (existing) existing.replaceWith(renderCesta());
+          }
+        } catch (err) { console.error(err); }
+      } else {
+        sendQuick(t);
+      }
+    });
+  });
+
+  return div;
+}
+
 // Convierte texto con bullets y secciones a HTML simple
 function renderAssistant(text){
   const div = document.createElement('div');
@@ -649,6 +751,8 @@ function addAssistantMessage(text, cartItems){
   let el;
   if (esMermeladaTest(text)) {
     el = renderTest(text);
+  } else if (esComparacion(text)) {
+    el = renderComparacion(text);
   } else {
     el = renderAssistant(text);
   }
