@@ -490,8 +490,8 @@ function renderComparacion(text) {
     if (l.startsWith('Producto:') || l.startsWith('Product:')) {
       if (currentProd) productos.push(currentProd);
       currentProd = { nombre: l.split(':').slice(1).join(':').trim(), puntos: [] };
-    } else if (l.startsWith('•') && currentProd) {
-      currentProd.puntos.push(l.slice(1).trim());
+    } else if ((l.startsWith('•') || l.startsWith('-')) && currentProd) {
+      currentProd.puntos.push(l.replace(/^[•\-]\s*/, '').trim());
     } else if (l.toLowerCase().startsWith('recomendación:') || l.toLowerCase().startsWith('recomendacion:') || l.toLowerCase().startsWith('recommendation:')) {
       const content = escapeHtml(l.split(':').slice(1).join(':').trim());
       const recLabel = getLang() === 'inglés' ? 'Recommendation:' : 'Recomendación:';
